@@ -30,22 +30,22 @@ rule tier1_to_tier2:
         "scripts/tier1_to_tier2.py"
 
 
-# Create any of "dataset[-{detector}[-{measurement}[-{run}[-{timestamp}]]]].keys":
-rule create_dataset:
+# Auto-generate "all[-{detector}[-{measurement}[-{run}[-{timestamp}]]]].keylist"
+# based on available tier0 files.
+rule autogen_dataset:
     output:
-        "dataset{keypart,|-.*}.keys"
+        "all{keypart,|-.*}.keylist"
     params:
         setup = lambda wildcards: setup
     script:
         "scripts/create_dataset.py"
 
 
-# Create any of "{tier}[-{detector}[-{measurement}[-{run}[-{timestamp}]]]].files":
-checkpoint create_filelist:
+checkpoint gen_filelist:
     input:
-        "dataset{keypart}.keys"
+        "{label}.keylist"
     output:
-        "{tier,[^-]+}{keypart,|-.*}.files"
+        "{label}-{tier,[^-]+}.filelist"
     params:
         setup = lambda wildcards: setup
     script:
@@ -53,14 +53,15 @@ checkpoint create_filelist:
 
 
 def read_filelist(wildcards):
-    with checkpoints.create_filelist.get(tier=wildcards.tier,keypart=wildcards.keypart).output[0].open() as f:
+    with checkpoints.gen_filelist.get(label=wildcards.label, tier=wildcards.tier).output[0].open() as f:
         return f.read().splitlines() 
 
-# Create any of "{tier}[-{detector}[-{measurement}[-{run}[-{timestamp}]]]].gen":
-rule gen_filelist:
+# Create "{label}-{tier}.gen", based on "{label}.keylist" via "{label}-{tier}.filelist".
+# E.g. "all[-{detector}[-{measurement}[-{run}[-{timestamp}]]]]-{tier}.gen":
+rule autogen_output:
     input:
         read_filelist
     output:
-        "{tier,[^-]+}{keypart,|-.*}.gen"
+        "{label}-{tier,[^-]+}.gen"
     shell:
         "touch {output}"
