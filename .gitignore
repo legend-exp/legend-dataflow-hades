@@ -3,6 +3,7 @@ __pycache__
 .snakemake
 .ipynb_checkpoints
 .vscode
+.panoptes.db
 
 config.json
 
