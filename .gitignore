@@ -1,0 +1,11 @@
+__pycache__
+
+.snakemake
+.ipynb_checkpoints
+.vscode
+
+config.json
+
+*.keys
+*.files
+*.gen
