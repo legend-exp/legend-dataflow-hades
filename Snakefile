@@ -32,13 +32,13 @@ rule tier1_to_tier2:
 
 # Auto-generate "all[-{detector}[-{measurement}[-{run}[-{timestamp}]]]].keylist"
 # based on available tier0 files.
-rule autogen_dataset:
+rule autogen_keylist:
     output:
         "all{keypart,|-.*}.keylist"
     params:
         setup = lambda wildcards: setup
     script:
-        "scripts/create_dataset.py"
+        "scripts/create_keylist.py"
 
 
 checkpoint gen_filelist:

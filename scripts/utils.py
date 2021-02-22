@@ -19,7 +19,7 @@ def prodver(setup):
     return setup["prodver"]
 
 def key_pattern():
-    return "{detector}-{measurement}-{run}-{timestamp}"
+    return "{detector}-{measurement}-run{run}-{timestamp}"
 
 def tier_fn_pattern(setup, tier):
     if tier == "tier0":
