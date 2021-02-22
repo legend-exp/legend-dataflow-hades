@@ -25,6 +25,7 @@ rule tier1_to_tier2:
     output:
         tier_fn_pattern(setup, "tier2")
     params:
+        setup = lambda wildcards: setup,
         n_max = lambda wildcards: 100
     script:
         "scripts/tier1_to_tier2.py"

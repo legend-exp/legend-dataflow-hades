@@ -6,7 +6,9 @@ from pygama.io.raw_to_dsp import raw_to_dsp
 import json
 from collections import OrderedDict 
 
-metadata = snakemake.config["setups"]["l200hades"]["data"]["meta"]
+from utils import *
+
+metadata = metadata_path(snakemake.params.setup)
 f_config = f"{metadata}/config_dsp.json"
 
 with open(f_config) as f:
