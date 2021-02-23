@@ -1,12 +1,17 @@
-import os, pathlib
+import argparse, os, pathlib
 
 import pygama
 from pygama.io.fcdaq import * 
 
 import numpy as np
 
-pathlib.Path(os.path.dirname(snakemake.output[0])).mkdir(parents=True, exist_ok=True)
+argparser = argparse.ArgumentParser()
+argparser.add_argument("input", help="input file", type=str)
+argparser.add_argument("output", help="output file", type=str)
+args = argparser.parse_args()
+
+pathlib.Path(os.path.dirname(args.output)).mkdir(parents=True, exist_ok=True)
 
 # ToDo: Atomic file creation
 
-process_flashcam(snakemake.input[0], snakemake.output[0], np.inf)
+process_flashcam(args.input, args.output, np.inf)

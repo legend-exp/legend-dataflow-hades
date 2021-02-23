@@ -13,8 +13,8 @@ Data processing resources are configured via a single site-dependent (and
 possibly user-dependent) configuration file, named "config.json" in the
 following. You may choose an arbitrary name, though.
 
-Use the included [example-config.json](example-config.json) as a template
-and adjusted the data base paths as necessary.
+Use the included [templates/config.json](templates/config.json) as a template
+and adjust the data base paths as necessary.
 
 When running Snakemake, the path to the config file *must* be provided via
 `--configfile=path/to/configfile.json`. For example, run
@@ -119,3 +119,27 @@ progress information to the panoptes server:
 ```shell
 snakemake --wms-monitor http://127.0.0.1:5000 [...]
 ```
+
+
+## Running on a batch system
+
+A template configuration to run the dataflow on an SGE batch system with
+Singularity containers instantiated via
+[`venv`](https://github.com/oschulz/singularity-venv) is included in
+[templates/snakemake-config](templates/snakemake-config). Copy the
+configuration into `"$HOME/.config/snakemake"` and adjust as necessary
+(especially batch-queue selection, number of jobs, etc.).
+
+The configuration assumes that `venv` is installed as
+`"$HOME/.local/bin/venv"` and that `venv legend` will start a suitable LEGEND
+ container instance.
+
+You should then be able to run containerized data production on the batch
+system via (e.g.):
+
+```shell
+snakemake --profile cluster-sge --configfile=config.json all-mydet-mymeas-tier2.gen
+```
+
+The template configuration for SGE uses the Snakemakes' `--cluster-sync`
+option, so no `--cluster-status` script is necessary.

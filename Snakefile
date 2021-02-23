@@ -1,34 +1,16 @@
 from scripts.utils import *
+import pathlib
 
 # Set with `snakemake --configfile=/path/to/your/config.json`
 # configfile: "have/to/specify/path/to/your/config.json"
 
 setup = config["setups"]["l200hades"]
+metadata = metadata_path(setup)
 
+localrules: do_nothing, autogen_keylist, gen_filelist, autogen_output
 
 rule do_nothing:
     input:
-
-
-rule tier0_to_tier1:
-    input:
-        tier_fn_pattern(setup, "tier0")
-    output:
-        tier_fn_pattern(setup, "tier1")
-    script:
-        "scripts/tier0_to_tier1.py"
-
-
-rule tier1_to_tier2:
-    input:
-        tier_fn_pattern(setup, "tier1")
-    output:
-        tier_fn_pattern(setup, "tier2")
-    params:
-        setup = lambda wildcards: setup,
-        n_max = lambda wildcards: 100
-    script:
-        "scripts/tier1_to_tier2.py"
 
 
 # Auto-generate "all[-{detector}[-{measurement}[-{run}[-{timestamp}]]]].keylist"
@@ -57,12 +39,36 @@ def read_filelist(wildcards):
     with checkpoints.gen_filelist.get(label=wildcards.label, tier=wildcards.tier).output[0].open() as f:
         return f.read().splitlines() 
 
-# Create "{label}-{tier}.gen", based on "{label}.keylist" via "{label}-{tier}.filelist".
-# E.g. "all[-{detector}[-{measurement}[-{run}[-{timestamp}]]]]-{tier}.gen":
+# Create "{label}-{tier}.gen", based on "{label}.keylist" via
+# "{label}-{tier}.filelist". Will implicitly trigger creation of all files
+# in "{label}-{tier}.filelist".
+# Example: "all[-{detector}[-{measurement}[-{run}[-{timestamp}]]]]-{tier}.gen":
 rule autogen_output:
     input:
         read_filelist
     output:
         "{label}-{tier,[^-]+}.gen"
+    run:
+        pathlib.Path(output[0]).touch()
+
+
+rule tier0_to_tier1:
+    input:
+        tier_fn_pattern(setup, "tier0")
+    output:
+        tier_fn_pattern(setup, "tier1")
+    resources:
+        runtime=300
     shell:
-        "touch {output}"
+        "env; python3 scripts/tier0_to_tier1.py {input} {output}"
+
+
+rule tier1_to_tier2:
+    input:
+        tier_fn_pattern(setup, "tier1")
+    output:
+        tier_fn_pattern(setup, "tier2")
+    resources:
+        runtime=300
+    shell:
+        "python3 scripts/tier1_to_tier2.py --metadata {metadata} --nmax 100 {input} {output}"
