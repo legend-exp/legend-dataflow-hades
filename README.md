@@ -120,26 +120,37 @@ progress information to the panoptes server:
 snakemake --wms-monitor http://127.0.0.1:5000 [...]
 ```
 
+## Using software containers
+
+This dataflow doesn't use Snakemake's internal Singularity support, but
+instead supports Singularity containers via
+[`venv`](https://github.com/oschulz/singularity-venv) environments
+for greater control.
+
+To use this, the path to `venv` and the name of the environment must be set
+in "config.json".
+
+This is only relevant then running Snakemake *outside* of the software
+container, e.g. then using a batch system (see below). If Snakemake
+and the whole workflow is run inside of a container instance, no
+container-related settings in "config.json" are required.
+
 
 ## Running on a batch system
 
-A template configuration to run the dataflow on an SGE batch system with
-Singularity containers instantiated via
-[`venv`](https://github.com/oschulz/singularity-venv) is included in
-[templates/snakemake-config](templates/snakemake-config). Copy the
-configuration into `"$HOME/.config/snakemake"` and adjust as necessary
-(especially batch-queue selection, number of jobs, etc.).
+A template configuration to run the dataflow on an SGE batch system is
+included in [templates/snakemake-config](templates/snakemake-config).
+Copy the configuration into `"$HOME/.config/snakemake"` and adjust as
+necessary (especially batch-queue selection, number of jobs, etc.).
 
-The configuration assumes that `venv` is installed as
-`"$HOME/.local/bin/venv"` and that `venv legend` will start a suitable LEGEND
- container instance.
-
-You should then be able to run containerized data production on the batch
-system via (e.g.):
+You should then be able to run data production on the batch system via
+(e.g.):
 
 ```shell
-snakemake --profile cluster-sge --configfile=config.json all-mydet-mymeas-tier2.gen
+snakemake --profile cluster-sge --jobs 20 --configfile=config.json all-mydet-mymeas-tier2.gen
 ```
 
-The template configuration for SGE uses the Snakemakes' `--cluster-sync`
-option, so no `--cluster-status` script is necessary.
+The template configuration uses also requires `sqlite3`, it uses a
+custom job status database to support batch systems that don't provide
+native means to access the success/failure status of completed jobs
+(e.g. SGE installations without user access to `qacct`).

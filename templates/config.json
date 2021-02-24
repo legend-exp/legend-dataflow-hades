@@ -6,7 +6,13 @@
                 "gen": "/path/to/output/hades/char_data",
                 "meta": "/path/to/metadata_like_dsp_config"
             },
-            "prodver": "v01.00"
+            "prodver": "v01.00",
+            "software": {
+                "venv": {
+                    "path": "/path/to/bin/venv",
+                    "name": "legend"
+                }
+            }
         }
     }
 }

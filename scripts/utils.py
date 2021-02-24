@@ -1,5 +1,6 @@
 import snakemake as smk
 import re
+import shutil
 
 # For testing/debugging, use
 # from scripts.utils import *
@@ -17,6 +18,19 @@ def metadata_path(setup):
 
 def prodver(setup):
     return setup["prodver"]
+
+
+def runcmd(setup):
+    if "software" in setup:
+        if "venv" in setup["software"]:
+            venv_path = setup["software"]["venv"]["path"]
+            venv_name = setup["software"]["venv"]["name"]
+            return f"{venv_path} {venv_name}"
+        else:
+            return "exec"
+    else:
+        return "exec"
+
 
 def key_pattern():
     return "{detector}-{measurement}-run{run}-{timestamp}"

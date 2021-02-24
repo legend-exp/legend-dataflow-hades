@@ -6,6 +6,7 @@ import pathlib
 
 setup = config["setups"]["l200hades"]
 metadata = metadata_path(setup)
+swenv = runcmd(setup)
 
 localrules: do_nothing, autogen_keylist, gen_filelist, autogen_output
 
@@ -57,10 +58,11 @@ rule tier0_to_tier1:
         tier_fn_pattern(setup, "tier0")
     output:
         tier_fn_pattern(setup, "tier1")
+    group: "tier-1-2"
     resources:
         runtime=300
     shell:
-        "env; python3 scripts/tier0_to_tier1.py {input} {output}"
+        "{swenv} python3 scripts/tier0_to_tier1.py {input} {output}"
 
 
 rule tier1_to_tier2:
@@ -68,7 +70,8 @@ rule tier1_to_tier2:
         tier_fn_pattern(setup, "tier1")
     output:
         tier_fn_pattern(setup, "tier2")
+    group: "tier-1-2"
     resources:
         runtime=300
     shell:
-        "python3 scripts/tier1_to_tier2.py --metadata {metadata} --nmax 100 {input} {output}"
+        "{swenv} python3 scripts/tier1_to_tier2.py --metadata {metadata} --nmax 100 {input} {output}"

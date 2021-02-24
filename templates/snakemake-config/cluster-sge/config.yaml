@@ -1,4 +1,4 @@
-cluster-sync: "~/.config/snakemake/submit-job-sge.sh -r {resources.runtime}"
-no-shared-fs: true
+cluster: "~/.config/snakemake/job-submit-sge.sh -r {resources.runtime}"
+cluster-status: "~/.config/snakemake/job-status.sh"
 jobs: 10
 default-resources: runtime=5
