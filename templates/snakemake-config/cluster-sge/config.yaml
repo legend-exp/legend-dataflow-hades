@@ -1,4 +1,9 @@
-cluster: "~/.config/snakemake/job-submit-sge.sh -r {resources.runtime}"
-cluster-status: "~/.config/snakemake/job-status.sh"
+cluster: "sge-submit.sh"
+cluster-status: "sge-status.sh"
+jobscript: "sge-jobscript.sh"
 jobs: 10
-default-resources: runtime=5
+default-resources: runtime=600
+max-jobs-per-second: 10
+max-status-checks-per-second: 10
+restart-times: 2
+keep-going: true
