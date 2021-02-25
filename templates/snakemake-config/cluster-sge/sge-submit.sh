@@ -1,6 +1,6 @@
 #!/bin/bash -e
 
-joblogdir="${HOME}/batch-logs"
+joblogdir="`pwd`/.snakemake/batch-log"
 
 
 scriptdir() {
@@ -20,8 +20,8 @@ job_id=$(
     qsub \
         -cwd -V \
         -N "$jobname" \
-        -o "$HOME/batch-logs/$jobname.stdout"  \
-        -e "$HOME/batch-logs/$jobname.stderr" \
+        -o "$joblogdir/$jobname.stdout"  \
+        -e "$joblogdir/$jobname.stderr" \
         "$jobscript" \
     | head -n1 | sed 's/[^0-9]*\([0-9]\+\).*/\1/'
 )

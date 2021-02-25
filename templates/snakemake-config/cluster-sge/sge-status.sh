@@ -1,9 +1,8 @@
 #!/bin/bash
 
-jobstatusdir="${HOME}/batch-status"
+jobstatusdir="`pwd`/.snakemake/batch-status"
 
 jobid="$1"
-
 
 if (qstat -u `whoami` | grep -q "${jobid}") ; then
     echo "running"

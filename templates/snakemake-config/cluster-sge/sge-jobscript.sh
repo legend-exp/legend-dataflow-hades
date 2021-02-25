@@ -3,7 +3,7 @@
 
 set -o errexit
 
-jobstatusdir="$HOME/batch-status"
+jobstatusdir="`pwd`/.snakemake/batch-status"
 
 jobid="$JOB_ID"
 

@@ -1,5 +1,5 @@
 from scripts.utils import *
-import pathlib
+import pathlib, os
 
 # Set with `snakemake --configfile=/path/to/your/config.json`
 # configfile: "have/to/specify/path/to/your/config.json"
@@ -7,6 +7,9 @@ import pathlib
 setup = config["setups"]["l200hades"]
 metadata = metadata_path(setup)
 swenv = runcmd(setup)
+
+basedir = workflow.basedir
+
 
 localrules: do_nothing, autogen_keylist, gen_filelist, autogen_output
 
@@ -62,7 +65,7 @@ rule tier0_to_tier1:
     resources:
         runtime=300
     shell:
-        "{swenv} python3 scripts/tier0_to_tier1.py {input} {output}"
+        "{swenv} python3 {basedir}/scripts/tier0_to_tier1.py {input} {output}"
 
 
 rule tier1_to_tier2:
@@ -74,4 +77,4 @@ rule tier1_to_tier2:
     resources:
         runtime=300
     shell:
-        "{swenv} python3 scripts/tier1_to_tier2.py --metadata {metadata} --nmax 100 {input} {output}"
+        "{swenv} python3 {basedir}/scripts/tier1_to_tier2.py --metadata {metadata} --nmax 100 {input} {output}"
