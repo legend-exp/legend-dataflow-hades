@@ -149,8 +149,3 @@ You should then be able to run data production on the batch system via
 ```shell
 snakemake --profile cluster-sge --jobs 20 --configfile=config.json all-mydet-mymeas-tier2.gen
 ```
-
-The template configuration uses also requires `sqlite3`, it uses a
-custom job status database to support batch systems that don't provide
-native means to access the success/failure status of completed jobs
-(e.g. SGE installations without user access to `qacct`).

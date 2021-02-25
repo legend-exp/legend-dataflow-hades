@@ -1,31 +1,21 @@
 #!/bin/bash
 
-dbpath="${HOME}/jobstatus.db"
+jobstatusdir="${HOME}/batch-status"
 
-job_id="${JOB_ID}"
+jobid="${JOB_ID}"
 
-echo "JOB WRAPPER: job ${job_id} starting." >&2
 
-run-sqlite() {
-    sqlite3 -cmd ".timeout 10000" "${dbpath}" "$@"
-}
-
-if [ ! -f "${dbpath}" ] ; then
-    echo "ERROR, SQLite job database \"${dbpath}\" doesn't exist." >&2
+if [ -z "${jobid}" ] ; then
+    echo "ERROR: JOB WRAPPER: Can't find job id in environment variables." >&2
     exit 1
 fi
 
-run-sqlite "CREATE TABLE IF NOT EXISTS jobstatus (jobid INTEGER NOT NULL PRIMARY KEY, status INTEGER NOT NULL)"
-
-run-sqlite "REPLACE INTO jobstatus (jobid, status) VALUES (${job_id}, 2)" \
-    && echo "JOB WRAPPER: marked job ${job_id} as running." >&2
+echo "JOB WRAPPER: Job id ${jobid} starting: $@" >&2
 
 if ("$@"); then
-    run-sqlite "REPLACE INTO jobstatus (jobid, status) VALUES (${job_id}, 0)" \
-        && echo "JOB WRAPPER: marked job ${job_id} as successful." >&2
+    touch "${jobstatusdir}/${jobid}.success"
     exit 0
 else
-    run-sqlite "REPLACE INTO jobstatus (jobid, status) VALUES (${job_id}, 1)" \
-        && echo "JOB WRAPPER: marked job ${job_id} as failed." >&2
+    touch "${jobstatusdir}/${jobid}.failed"
     exit 1
 fi
