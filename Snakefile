@@ -4,6 +4,8 @@ import pathlib, os
 # Set with `snakemake --configfile=/path/to/your/config.json`
 # configfile: "have/to/specify/path/to/your/config.json"
 
+subst_vars_in_snakemake_config(workflow, config)
+
 setup = config["setups"]["l200hades"]
 metadata = metadata_path(setup)
 swenv = runcmd(setup)
