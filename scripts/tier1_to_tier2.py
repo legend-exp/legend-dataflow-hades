@@ -13,7 +13,7 @@ argparser.add_argument("input", help="input file", type=str)
 argparser.add_argument("output", help="output file", type=str)
 args = argparser.parse_args()
 
-f_config = f"{args.metadata}/config_dsp.json"
+f_config = os.path.join(f"{args.metadata}", "config_dsp.json")
 
 with open(f_config) as f:
     config_dic = json.load(f, object_pairs_hook=OrderedDict) 

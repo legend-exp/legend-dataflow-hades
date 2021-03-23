@@ -1,5 +1,6 @@
 import snakemake as smk
 import re
+import os
 import shutil
 
 # For testing/debugging, use
@@ -34,9 +35,9 @@ def key_pattern():
 
 def tier_fn_pattern(setup, tier):
     if tier == "tier0":
-        return f"{origdata_path(setup)}/" + "{detector}/tier0/{measurement}/char_data-{detector}-{measurement}-run{run}-{timestamp}.fcio"
+        return os.path.join(f"{origdata_path(setup)}", "{detector}", "tier0", "{measurement}", "char_data-{detector}-{measurement}-run{run}-{timestamp}.fcio")
     else:
-        return f"{gendata_path(setup)}/" + "{detector}/" + tier + "/{measurement}/char_data-{detector}-{measurement}-run{run}-{timestamp}_" + tier +".lh5"
+        return os.path.join(f"{gendata_path(setup)}", "{detector}", tier, "{measurement}", "char_data-{detector}-{measurement}-run{run}-{timestamp}_" + tier + ".lh5")
 
 
 def parse_keypart(keypart):
