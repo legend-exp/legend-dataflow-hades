@@ -11,13 +11,13 @@ import string
 # setup = smk.load_configfile("config.json")["setups"]["l200hades"]
 
 def origdata_path(setup):
-    return setup["data"]["orig"]
+    return setup["paths"]["orig"]
 
 def gendata_path(setup):
-    return setup["data"]["gen"]
+    return setup["paths"]["gen"]
 
 def metadata_path(setup):
-    return setup["data"]["meta"]
+    return setup["paths"]["meta"]
 
 
 def runcmd(setup):
