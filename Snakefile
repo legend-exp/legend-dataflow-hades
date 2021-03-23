@@ -8,7 +8,7 @@ subst_vars_in_snakemake_config(workflow, config)
 
 setup = config["setups"]["l200hades"]
 metadata = metadata_path(setup)
-swenv = runcmd(setup)
+swenv = runcmd(setup, "legend")
 
 basedir = workflow.basedir
 

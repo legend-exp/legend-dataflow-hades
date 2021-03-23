@@ -20,16 +20,14 @@ def metadata_path(setup):
     return setup["paths"]["meta"]
 
 
-def runcmd(setup):
-    if "software" in setup:
-        if "venv" in setup["software"]:
-            venv_path = setup["software"]["venv"]["path"]
-            venv_name = setup["software"]["venv"]["name"]
-            return f"{venv_path} {venv_name}"
-        else:
-            return "exec"
-    else:
-        return "exec"
+def runcmd(setup, envname):
+    envcfg = setup["execenv"][envname]
+    execcmd = envcfg["exec"]
+    joined_cmd = execcmd if isinstance(execcmd, str) else " ".join(execcmd)
+    envdefs = ""
+    if "env" in envcfg:
+        envdefs = " ".join([f"{key}={value}" for key, value in envcfg["env"].items()]) + " "
+    return  envdefs + joined_cmd
 
 
 def key_pattern():
