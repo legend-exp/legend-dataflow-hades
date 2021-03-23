@@ -16,9 +16,6 @@ def gendata_path(setup):
 def metadata_path(setup):
     return setup["data"]["meta"]
 
-def prodver(setup):
-    return setup["prodver"]
-
 
 def runcmd(setup):
     if "software" in setup:
@@ -39,7 +36,7 @@ def tier_fn_pattern(setup, tier):
     if tier == "tier0":
         return f"{origdata_path(setup)}/" + "{detector}/tier0/{measurement}/char_data-{detector}-{measurement}-run{run}-{timestamp}.fcio"
     else:
-        return f"{gendata_path(setup)}/" + "{detector}/" + tier + "/{measurement}/pygama/" + f"{prodver(setup)}" + "/char_data-{detector}-{measurement}-run{run}-{timestamp}_" + tier +".lh5"
+        return f"{gendata_path(setup)}/" + "{detector}/" + tier + "/{measurement}/char_data-{detector}-{measurement}-run{run}-{timestamp}_" + tier +".lh5"
 
 
 def parse_keypart(keypart):
