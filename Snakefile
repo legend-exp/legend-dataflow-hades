@@ -8,7 +8,7 @@ subst_vars_in_snakemake_config(workflow, config)
 
 setup = config["setups"]["l200hades"]
 metadata = metadata_path(setup)
-swenv = runcmd(setup, "legend")
+swenv = runcmd(setup, "default")
 
 basedir = workflow.basedir
 
@@ -79,4 +79,4 @@ rule tier1_to_tier2:
     resources:
         runtime=300
     shell:
-        "{swenv} python3 {basedir}/scripts/tier1_to_tier2.py --metadata {metadata} --nmax 100 {input} {output}"
+        "{swenv} python3 {basedir}/scripts/tier1_to_tier2.py --metadata {metadata} {input} {output}"
