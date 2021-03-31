@@ -8,7 +8,6 @@ from collections import OrderedDict
 
 argparser = argparse.ArgumentParser()
 argparser.add_argument("--metadata", help="metadata path", type=str, required=True)
-argparser.add_argument("--nmax", help="number of waveforms to process", type=int, required=True)
 argparser.add_argument("input", help="input file", type=str)
 argparser.add_argument("output", help="output file", type=str)
 args = argparser.parse_args()
@@ -22,4 +21,4 @@ pathlib.Path(os.path.dirname(args.output)).mkdir(parents=True, exist_ok=True)
 
 # ToDo: Atomic file creation
 
-raw_to_dsp(args.input, args.output, config_dic, n_max=args.nmax, verbose=True, overwrite=False) 
+raw_to_dsp(args.input, args.output, config_dic, verbose=True, overwrite=False) 
