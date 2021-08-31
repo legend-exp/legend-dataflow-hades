@@ -19,6 +19,8 @@ def gendata_path(setup):
 def metadata_path(setup):
     return setup["paths"]["meta"]
 
+def genpardata_path(setup):
+    return setup["paths"]["genpar"]
 
 def runcmd(setup, envname):
     envcfg = setup["execenv"][envname]
@@ -39,6 +41,23 @@ def tier_fn_pattern(setup, tier):
     else:
         return os.path.join(f"{gendata_path(setup)}", "{detector}", tier, "{measurement}", "char_data-{detector}-{measurement}-run{run}-{timestamp}_" + tier + ".lh5")
 
+def dsp_pars_fn_pattern(setup):
+    return os.path.join(f"{genpardata_path(setup)}", "dsp_proc_pars", "dsp_pp-{detector}-tier2.json")
+
+def dsp_pars_e_fn_pattern(setup):
+    return os.path.join(f"{genpardata_path(setup)}", "dsp_proc_pars", "dsp_pp_e-{detector}-tier2.json")
+
+def opt_grids_fn_pattern_combine(setup):
+    return os.path.join(f"{genpardata_path(setup)}", "dsp_proc_pars","energy_optimising","{{detector}}", "peak_grids", "{peak}.pkl" )
+
+def opt_grids_fn_pattern(setup):
+    return os.path.join(f"{genpardata_path(setup)}", "dsp_proc_pars","energy_optimising", "{detector}", "peak_grids", "{peak}.pkl" )
+
+def qbb_grid_fn_pattern(setup):
+    return os.path.join(f"{genpardata_path(setup)}", "dsp_proc_pars","energy_optimising", "{detector}", "qbb_grid.pkl" )
+
+def best_e_res_fn_pattern(setup):
+    return os.path.join(f"{genpardata_path(setup)}", "dsp_proc_pars","energy_optimising", "{detector}", "fwhms.json" )
 
 def parse_keypart(keypart):
     keypart_rx = re.compile('(-(?P<detector>[^-]+)(\\-(?P<measurement>[^-]+)(\\-(?P<run>[^-]+)(\\-(?P<timestamp>[^-]+))?)?)?)?$')
