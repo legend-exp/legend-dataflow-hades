@@ -17,8 +17,12 @@ f_config = os.path.join(f"{args.metadata}", "initial_config_dsp.json")
 with open(f_config) as f:
     config_dic = json.load(f, object_pairs_hook=OrderedDict) 
 
-with open(args.input) as f:
-    files = f.read().splitlines()[0]
+input_file = args.input
 
+if input_file.split('.')[-1] == 'filelist':
+    with open(input_file) as f:
+        input_file = f.read().splitlines()[0]
+
+print(input_file)
 pathlib.Path(os.path.dirname(args.output)).mkdir(parents=True, exist_ok=True)
-dpp.dsp_preprocess_decay_const(files, config_dic, database_file=args.output,  verbose=True, overwrite=False) 
+dpp.dsp_preprocess_decay_const(input_file, config_dic, database_file=args.output,  verbose=True, overwrite=False) 

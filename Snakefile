@@ -69,10 +69,36 @@ rule tier0_to_tier1:
     shell:
         "{swenv} python3 {basedir}/scripts/tier0_to_tier1.py {input} {output}"
 
+def get_th_filelist_firstentry(wildcards):
+    label = "all-"+wildcards.detector+"-th_HS2_lat_psa"
+    with checkpoints.gen_filelist.get(label=label, tier="tier1").output[0].open() as f:
+        files = f.read().splitlines()
+        return files[0]
+
+rule tier1_to_tier2_preprocess_tau:
+    input:
+        get_th_filelist_firstentry
+    output:
+        dsp_pars_fn_pattern(setup)
+    group: "tier-1-2-pproc"
+    resources:
+        runtime=300
+    shell:
+        "{swenv} python3 {basedir}/scripts/tier2_preprocess_tau.py --metadata {metadata} {input} {output}"
+
+def get_th_filelist_longest_run(wildcards):
+    #with open(f"all-{wildcards.detector}-th_HS2_lat_psa-tier1.filelist") as f:
+    label = "all-"+wildcards.detector+"-th_HS2_lat_psa"
+    with checkpoints.gen_filelist.get(label=label, tier="tier1").output[0].open() as f:
+        files = f.read().splitlines()
+        run_files = sorted(run_splitter(files),key=len)
+        return run_files[-1]
+
 rule tier1_to_tier2_preprocess_energy:
     input:
         filelist = "all-{detector}-th_HS2_lat_psa-tier1.filelist",
         genlist= "all-{detector}-th_HS2_lat_psa-tier1.gen",
+        #files = get_th_filelist_longest_run,
         db_dict_path = dsp_pars_fn_pattern(setup)
     params:    
         peak = "{peak}"
@@ -82,7 +108,7 @@ rule tier1_to_tier2_preprocess_energy:
     resources:
         runtime=300
     shell:
-        "{swenv} python3 {basedir}/scripts/tier2_preprocess_energy.py --db_dict_path {input.db_dict_path}  --metadata {metadata} --peak {params.peak}  {input.filelist} {output}"
+        "{swenv} python3 {basedir}/scripts/tier2_preprocess_energy.py --db_dict_path {input.db_dict_path}  --metadata {metadata} --peak {params.peak}  --output_path {output} {input.filelist}"
 
 rule tier1_to_tier2_preprocess_energy_combine:
     input:
@@ -99,23 +125,7 @@ rule tier1_to_tier2_preprocess_energy_combine:
     shell:
         "{swenv} python3 {basedir}/scripts/tier2_preprocess_energy_combine.py --db_dict_path {output.db_dict_path} --metadata {metadata} --raw_filelist {input.filelist} --tau_db_dict_path {input.db_dict_path} --qbb_grid_path {output.qbb_grid} --fwhm_path {output.fwhms} {input.files}  "
 
-def get_filelist_firstentry(wildcards):
-    with open(f"all-{wildcards.detector}-th_HS2_lat_psa-tier1.filelist") as f:
-        files = f.read().splitlines()
-        return files[0]
 
-rule tier1_to_tier2_preprocess_tau:
-    input:
-        filelist = "all-{detector}-th_HS2_lat_psa-tier1.filelist",
-        #data_file = get_filelist_firstentry
-        genlist= "all-{detector}-th_HS2_lat_psa-tier1.gen"
-    output:
-        dsp_pars_fn_pattern(setup)
-    group: "tier-1-2-pproc"
-    resources:
-        runtime=300
-    shell:
-        "{swenv} python3 {basedir}/scripts/tier2_preprocess_tau.py --metadata {metadata} {input.filelist} {output}"
 
 rule tier1_to_tier2:
     input:

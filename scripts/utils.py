@@ -121,3 +121,23 @@ def subst_vars_in_snakemake_config(workflow, config):
         var_values = {'_': os.path.dirname(config_filename)},
         use_env = True, ignore_missing = False
     )
+
+def run_splitter(files):
+    """
+    Returns list containing lists of each run
+    """
+    
+    runs = []
+    run_files = []
+    for file in files:
+        base=os.path.basename(file)
+        file_name = os.path.splitext(base)[0]
+        parts = file_name.split('-')
+        run_no = parts[3]
+        if run_no not in runs:
+            runs.append(run_no)
+            run_files.append([])
+        for i,run in enumerate(runs):
+            if run == run_no:
+                run_files[i].append(file) 
+    return run_files
