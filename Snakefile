@@ -118,12 +118,13 @@ rule tier1_to_tier2_preprocess_energy_combine:
     output:
         qbb_grid = qbb_grid_fn_pattern(setup),
         fwhms = best_e_res_fn_pattern(setup),
-        db_dict_path = dsp_pars_e_fn_pattern(setup)
+        db_dict_path = dsp_pars_e_fn_pattern(setup),
+        plot_path = directory(opt_plots_fn_pattern(setup))
     group: "tier-1-2-pproc_ec"
     resources:
         runtime=300
     shell:
-        "{swenv} python3 {basedir}/scripts/tier2_preprocess_energy_combine.py --db_dict_path {output.db_dict_path} --metadata {metadata} --raw_filelist {input.filelist} --tau_db_dict_path {input.db_dict_path} --qbb_grid_path {output.qbb_grid} --fwhm_path {output.fwhms} {input.files}  "
+        "{swenv} python3 {basedir}/scripts/tier2_preprocess_energy_combine.py --db_dict_path {output.db_dict_path} --metadata {metadata} --raw_filelist {input.filelist} --tau_db_dict_path {input.db_dict_path} --qbb_grid_path {output.qbb_grid} --fwhm_path {output.fwhms} --plot_save_path {output.plot_path} {input.files}  "
 
 
 
@@ -139,4 +140,5 @@ rule tier1_to_tier2:
         runtime=300
     shell:
         "{swenv} python3 {basedir}/scripts/tier1_to_tier2.py --metadata {metadata} --database_tau {input.database} --database_energy {input.database_energy} {input.infile} {output}"
+
 

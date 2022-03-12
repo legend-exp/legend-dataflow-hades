@@ -59,6 +59,10 @@ def qbb_grid_fn_pattern(setup):
 def best_e_res_fn_pattern(setup):
     return os.path.join(f"{genpardata_path(setup)}", "dsp_proc_pars","energy_optimising", "{detector}", "fwhms.json" )
 
+def opt_plots_fn_pattern(setup):
+    return os.path.join(f"{genpardata_path(setup)}", "dsp_proc_pars","energy_optimising", "plots",  "{detector}" )
+
+
 def parse_keypart(keypart):
     keypart_rx = re.compile('(-(?P<detector>[^-]+)(\\-(?P<measurement>[^-]+)(\\-(?P<run>[^-]+)(\\-(?P<timestamp>[^-]+))?)?)?)?$')
     d = keypart_rx.match(keypart).groupdict()
