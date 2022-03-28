@@ -1,5 +1,5 @@
 import json, os
-import pygama.genpar_tmp.optimiser_macro as om
+import pygama.pargen.energy_optimising as om
 import pygama.analysis.peak_fitting as pgf
 from collections import OrderedDict
 import pickle

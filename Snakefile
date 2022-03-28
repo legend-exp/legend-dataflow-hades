@@ -70,7 +70,7 @@ rule tier0_to_tier1:
         "{swenv} python3 {basedir}/scripts/tier0_to_tier1.py {input} {output}"
 
 def get_th_filelist_firstentry(wildcards):
-    label = "all-"+wildcards.detector+"-th_HS2_lat_psa"
+    label = f"all-{wildcards.detector}-th_HS2_top_psa"
     with checkpoints.gen_filelist.get(label=label, tier="tier1").output[0].open() as f:
         files = f.read().splitlines()
         return files[0]
@@ -79,12 +79,13 @@ rule tier1_to_tier2_preprocess_tau:
     input:
         get_th_filelist_firstentry
     output:
-        dsp_pars_fn_pattern(setup)
+        out_files = dsp_pars_fn_pattern(setup),
+        out_plots = tau_plots_fn_pattern(setup)
     group: "tier-1-2-pproc"
     resources:
         runtime=300
     shell:
-        "{swenv} python3 {basedir}/scripts/tier2_preprocess_tau.py --metadata {metadata} {input} {output}"
+        "{swenv} python3 {basedir}/scripts/tier2_preprocess_tau.py --metadata {metadata} --plot_path {output.out_plots} {input} {output.out_files}"
 
 def get_th_filelist_longest_run(wildcards):
     #with open(f"all-{wildcards.detector}-th_HS2_lat_psa-tier1.filelist") as f:
@@ -96,9 +97,9 @@ def get_th_filelist_longest_run(wildcards):
 
 rule tier1_to_tier2_preprocess_energy:
     input:
-        filelist = "all-{detector}-th_HS2_lat_psa-tier1.filelist",
-        genlist= "all-{detector}-th_HS2_lat_psa-tier1.gen",
-        #files = get_th_filelist_longest_run,
+        filelist = "all-{detector}-th_HS2_top_psa-tier1.filelist",
+        #genlist= "all-{detector}-th_HS2_top_psa-tier1.gen",
+        files = get_th_filelist_longest_run,
         db_dict_path = dsp_pars_fn_pattern(setup)
     params:    
         peak = "{peak}"
@@ -113,7 +114,7 @@ rule tier1_to_tier2_preprocess_energy:
 rule tier1_to_tier2_preprocess_energy_combine:
     input:
         files = expand(opt_grids_fn_pattern_combine(setup), peak = [238.632,   583.191, 727.330, 860.564, 1620.5, 2614.553]),
-        filelist = "all-{detector}-th_HS2_lat_psa-tier1.filelist",
+        filelist = "all-{detector}-th_HS2_top_psa-tier1.filelist",
         db_dict_path = dsp_pars_fn_pattern(setup)
     output:
         qbb_grid = qbb_grid_fn_pattern(setup),
@@ -131,14 +132,12 @@ rule tier1_to_tier2_preprocess_energy_combine:
 rule tier1_to_tier2:
     input:
         infile = tier_fn_pattern(setup, "tier1"), 
-        database = dsp_pars_fn_pattern(setup),
-        database_energy = dsp_pars_e_fn_pattern(setup)
+        database = dsp_pars_e_fn_pattern(setup)
     output:
         tier_fn_pattern(setup, "tier2")
     group: "tier-2"
     resources:
         runtime=300
     shell:
-        "{swenv} python3 {basedir}/scripts/tier1_to_tier2.py --metadata {metadata} --database_tau {input.database} --database_energy {input.database_energy} {input.infile} {output}"
-
+        "{swenv} python3 {basedir}/scripts/tier1_to_tier2.py --metadata {metadata}  --database {input.database} {input.infile} {output}"
 

@@ -19,8 +19,11 @@ def gendata_path(setup):
 def metadata_path(setup):
     return setup["paths"]["meta"]
 
-def genpardata_path(setup):
-    return setup["paths"]["genpar"]
+def pargendata_path(setup):
+    return setup["paths"]["pargen"]
+
+def plot_path(setup):
+    return setup["paths"]["plots"]
 
 def runcmd(setup, envname):
     envcfg = setup["execenv"][envname]
@@ -42,25 +45,28 @@ def tier_fn_pattern(setup, tier):
         return os.path.join(f"{gendata_path(setup)}", "{detector}", tier, "{measurement}", "char_data-{detector}-{measurement}-run{run}-{timestamp}_" + tier + ".lh5")
 
 def dsp_pars_fn_pattern(setup):
-    return os.path.join(f"{genpardata_path(setup)}", "dsp_proc_pars", "dsp_pp-{detector}-tier2.json")
+    return os.path.join(f"{pargendata_path(setup)}", "dsp_proc_pars", "dsp_pp-{detector}-tier2.json")
 
 def dsp_pars_e_fn_pattern(setup):
-    return os.path.join(f"{genpardata_path(setup)}", "dsp_proc_pars", "dsp_pp_e-{detector}-tier2.json")
+    return os.path.join(f"{pargendata_path(setup)}", "dsp_proc_pars", "dsp_pp_e-{detector}-tier2.json")
 
 def opt_grids_fn_pattern_combine(setup):
-    return os.path.join(f"{genpardata_path(setup)}", "dsp_proc_pars","energy_optimising","{{detector}}", "peak_grids", "{peak}.pkl" )
+    return os.path.join(f"{pargendata_path(setup)}", "dsp_proc_pars","energy_optimising","{{detector}}", "peak_grids", "{peak}.pkl" )
 
 def opt_grids_fn_pattern(setup):
-    return os.path.join(f"{genpardata_path(setup)}", "dsp_proc_pars","energy_optimising", "{detector}", "peak_grids", "{peak}.pkl" )
+    return os.path.join(f"{pargendata_path(setup)}", "dsp_proc_pars","energy_optimising", "{detector}", "peak_grids", "{peak}.pkl" )
 
 def qbb_grid_fn_pattern(setup):
-    return os.path.join(f"{genpardata_path(setup)}", "dsp_proc_pars","energy_optimising", "{detector}", "qbb_grid.pkl" )
+    return os.path.join(f"{pargendata_path(setup)}", "dsp_proc_pars","energy_optimising", "{detector}", "qbb_grid.pkl" )
 
 def best_e_res_fn_pattern(setup):
-    return os.path.join(f"{genpardata_path(setup)}", "dsp_proc_pars","energy_optimising", "{detector}", "fwhms.json" )
+    return os.path.join(f"{pargendata_path(setup)}", "dsp_proc_pars","energy_optimising", "{detector}", "fwhms.json" )
 
 def opt_plots_fn_pattern(setup):
-    return os.path.join(f"{genpardata_path(setup)}", "dsp_proc_pars","energy_optimising", "plots",  "{detector}" )
+    return os.path.join(f"{plot_path(setup)}", "{detector}", "energy_optimising" )
+
+def tau_plots_fn_pattern(setup):
+    return os.path.join(f"{plot_path(setup)}", "{detector}", "pz_preprocess","slope.pdf" )
 
 
 def parse_keypart(keypart):
