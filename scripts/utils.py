@@ -68,6 +68,32 @@ def opt_plots_fn_pattern(setup):
 def tau_plots_fn_pattern(setup):
     return os.path.join(f"{plot_path(setup)}", "{detector}", "pz_preprocess","slope.pdf" )
 
+def ecal_fn_pattern(setup):
+    return os.path.join(f"{pargendata_path(setup)}", "hit_pproc", "ecal","all_sources","ecal-{detector}-{measurement}.json")
+
+def ecal_fn_pattern_sub(setup, detector, measurement):
+    return os.path.join(f"{pargendata_path(setup)}", "hit_pproc", "ecal","all_sources",f'ecal-{detector}-{measurement}.json')
+
+def th_ecal_fn_pattern(setup):
+    return os.path.join(f"{pargendata_path(setup)}", "hit_pproc", "ecal","all_sources","ecal-{detector}-th_HS2_top_psa.json")
+
+def ecal_th_fn_pattern(setup):
+    return os.path.join(f"{pargendata_path(setup)}", "hit_pproc", "ecal","th_ecal-{detector}.json")
+
+def ecal_plots_fn_pattern(setup):
+    return os.path.join(f"{plot_path(setup)}", "{detector}", "ecal", "{measurement}")
+
+def ecal_plots_fn_pattern_th(setup):
+    return os.path.join(f"{plot_path(setup)}", "{detector}", "ecal", "th_HS2_top_psa")
+
+def aoe_cal_fn_pattern(setup):
+    return os.path.join(f"{pargendata_path(setup)}", "hit_pproc", "aoe_cal","aoecal-{detector}.json")
+
+def aoe_plots_fn_pattern(setup):
+    return os.path.join(f"{plot_path(setup)}", "{detector}", "aoe","{detector}.pdf" )
+
+
+
 
 def parse_keypart(keypart):
     keypart_rx = re.compile('(-(?P<detector>[^-]+)(\\-(?P<measurement>[^-]+)(\\-(?P<run>[^-]+)(\\-(?P<timestamp>[^-]+))?)?)?)?$')
