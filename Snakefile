@@ -89,7 +89,7 @@ rule tier1_to_tier2_preprocess_tau:
 
 def get_th_filelist_longest_run(wildcards):
     #with open(f"all-{wildcards.detector}-th_HS2_lat_psa-tier1.filelist") as f:
-    label = "all-"+wildcards.detector+"-th_HS2_lat_psa"
+    label = "all-"+wildcards.detector+"-th_HS2_top_psa"
     with checkpoints.gen_filelist.get(label=label, tier="tier1").output[0].open() as f:
         files = f.read().splitlines()
         run_files = sorted(run_splitter(files),key=len)
@@ -97,7 +97,7 @@ def get_th_filelist_longest_run(wildcards):
 
 rule tier1_to_tier2_preprocess_energy:
     input:
-        filelist = "all-{detector}-th_HS2_top_psa-tier1.filelist",
+        #filelist = "all-{detector}-th_HS2_top_psa-tier1.filelist",
         #genlist= "all-{detector}-th_HS2_top_psa-tier1.gen",
         files = get_th_filelist_longest_run,
         db_dict_path = dsp_pars_fn_pattern(setup)
@@ -109,7 +109,7 @@ rule tier1_to_tier2_preprocess_energy:
     resources:
         runtime=300
     shell:
-        "{swenv} python3 {basedir}/scripts/tier2_preprocess_energy.py --db_dict_path {input.db_dict_path}  --metadata {metadata} --peak {params.peak}  --output_path {output} {input.filelist}"
+        "{swenv} python3 {basedir}/scripts/tier2_preprocess_energy.py --db_dict_path {input.db_dict_path}  --metadata {metadata} --peak {params.peak}  --output_path {output} {input.files}"
 
 rule tier1_to_tier2_preprocess_energy_combine:
     input:
@@ -141,3 +141,93 @@ rule tier1_to_tier2:
     shell:
         "{swenv} python3 {basedir}/scripts/tier1_to_tier2.py --metadata {metadata}  --database {input.database} {input.infile} {output}"
 
+def get_tier2_files(wildcards): 
+    label = f'all-{wildcards.detector}-{wildcards.measurement}'
+    with checkpoints.gen_filelist.get(label=label, tier="tier2").output[0].open() as f:
+        files = f.read().splitlines()
+        return sorted(files)[:10]
+
+def get_tier2_files_th(wildcards): 
+    label = f'all-{wildcards.detector}-th_HS2_top_psa'
+    with checkpoints.gen_filelist.get(label=label, tier="tier2").output[0].open() as f:
+        files = f.read().splitlines()
+        return sorted(files)[:10]
+
+def get_all_tier2_files_th(wildcards): 
+    label = f'all-{wildcards.detector}-th_HS2_top_psa'
+    with checkpoints.gen_filelist.get(label=label, tier="tier2").output[0].open() as f:
+        files = f.read().splitlines()
+        return sorted(files)
+
+ruleorder: th_energy_calibration > energy_calibration
+
+rule th_energy_calibration:
+    input:
+        files = get_tier2_files_th
+    params:
+        det = "{detector}"
+    output:
+        cal_file = th_ecal_fn_pattern(setup),
+        th_cal_file = ecal_th_fn_pattern(setup),
+        plot_file = directory(ecal_plots_fn_pattern_th(setup))
+    group: "tier-2-ecal"
+    resources:
+        runtime=300
+    shell:
+        "{swenv} python3 {basedir}/scripts/run_energy_cal.py --measurement th_HS2_top_psa --detector {params.det} --plot_path {output.plot_file} --save_path {output.cal_file} --th_cal_file {output.th_cal_file} {input.files}"
+
+rule energy_calibration:
+    input:
+        files = get_tier2_files
+    params:
+        source = "{measurement}",
+        det = "{detector}"
+    output:
+        cal_file = ecal_fn_pattern(setup),
+        plot_file = directory(ecal_plots_fn_pattern(setup))
+    group: "tier-2-ecal"
+    resources:
+        runtime=300
+    shell:
+        "{swenv} python3 {basedir}/scripts/run_energy_cal.py --measurement {params.source} --detector {params.det} --plot_path {output.plot_file} --save_path {output.cal_file} {input.files}"   
+
+rule aoe_calibration:
+    input:
+        files = get_all_tier2_files_th,
+        ecal_file = ecal_th_fn_pattern(setup)
+    params:
+        det = "{detector}"
+    output:
+        aoe_cal_file =  aoe_cal_fn_pattern(setup),
+        plot_file = aoe_plots_fn_pattern(setup)
+    group: "tier-2-aoe"
+    resources:
+        runtime=300
+    shell:
+        "{swenv} python3 {basedir}/scripts/run_aoe_cal.py  --detector {params.det} --plot_file {output.plot_file} --aoe_cal_file {output.aoe_cal_file} --ecal_file {input.ecal_file} {input.files}"     
+
+
+def get_ecal_file(wildcards):
+    measurement = wildcards.measurement
+    detector = wildcards.detector
+    if wildcards.measurement == "bkg":
+        measurement = "th_HS2_top_psa"
+    elif wildcards.measurement == "co_HS5_top_hvs":
+        measurement = "co_HS5_top_dlt"
+    elif wildcards.measurement =="am_HS1_top_ssh":
+        measurement = "am_HS1_lat_ssh"
+    pattern = ecal_fn_pattern_sub(setup, detector, measurement)
+    return pattern
+
+rule tier2_to_tier3:
+    input:
+        infile = tier_fn_pattern(setup, "tier2"), 
+        ecal_database = get_ecal_file, 
+        aoe_database = aoe_cal_fn_pattern(setup)
+    output:
+        tier_fn_pattern(setup, "tier3")
+    group: "tier-3"
+    resources:
+        runtime=300
+    shell:
+        "{swenv} python3 {basedir}/scripts/tier2_to_tier3.py --ecal_file {input.ecal_database} --aoe_cal_file {input.aoe_database} {input.infile} {output}"
