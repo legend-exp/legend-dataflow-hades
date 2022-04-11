@@ -15,7 +15,14 @@ argparser.add_argument("--database", help="database file for detector", type=str
 argparser.add_argument("output", help="output file", type=str)
 args = argparser.parse_args()
 
-f_config = os.path.join(f"{args.metadata}", "config_dsp.json")
+main_config = os.path.join(f"{args.metadata}", "main_config.json")
+
+with open(main_config, 'r') as f:
+    config_dict = json.load(f)
+
+det_config=config_dict[args.detector]
+
+f_config = os.path.join(f"{args.metadata}", det_config["main_dsp_config"])
 
 with open(f_config) as f:
     config_dic = json.load(f, object_pairs_hook=OrderedDict)

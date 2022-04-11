@@ -13,6 +13,7 @@ argparser.add_argument("raw_files", help="raw_files", type=str)
 #argparser.add_argument("raw_files", help="files", nargs='*',type=str)
 argparser.add_argument("--output_path", help="output_path", type=str)
 argparser.add_argument("--metadata", help="metadata", type=str, required=True)
+argparser.add_argument("--detector", help="detector", type=str, required=True)
 argparser.add_argument("--db_dict_path", help="db_dict_path", type=str, required=True)
 argparser.add_argument("--peak", help="peak", type=float, required=True)
 args = argparser.parse_args()
@@ -44,8 +45,14 @@ with open(args.raw_files) as f:
 
 raw_files = sorted(om.run_splitter(files), key=len)[-1]
 
+main_config = os.path.join(f"{args.metadata}", "main_config.json")
 
-f_config = os.path.join(f"{args.metadata}", "config_dsp.json")
+with open(main_config, 'r') as f:
+    config_dict = json.load(f)
+
+det_config=config_dict[args.detector]
+
+f_config = os.path.join(f"{args.metadata}", det_config["main_dsp_config"])
 with open(f_config, 'r') as config_file:
     config_dict = json.load(config_file, object_pairs_hook=OrderedDict)
 

@@ -40,6 +40,7 @@ argparser = argparse.ArgumentParser()
 argparser.add_argument("files", help="files", nargs='*',type=str)
 argparser.add_argument("--db_dict_path", help="db_dict_path", type=str, required=True)
 argparser.add_argument("--metadata", help="metadata", type=str, required=True)
+argparser.add_argument("--detector", help="detector", type=str, required=True)
 argparser.add_argument("--qbb_grid_path", help="qbb_grid_path", type=str)
 argparser.add_argument("--fwhm_path", help="fwhm_path", type=str)
 argparser.add_argument("--raw_filelist", help="raw_filelist", type=str)
@@ -77,7 +78,14 @@ with open(args.raw_filelist) as f:
 
 raw_file = sorted(om.run_splitter(file_list), key=len)[-1]
 
-f_config = os.path.join(f"{args.metadata}", "config_dsp.json")
+main_config = os.path.join(f"{args.metadata}", "main_config.json")
+
+with open(main_config, 'r') as f:
+    config_dict = json.load(f)
+
+det_config=config_dict[args.detector]
+
+f_config = os.path.join(f"{args.metadata}", det_config["main_dsp_config"])
 with open(f_config, 'r') as config_file:
     config_dict = json.load(config_file, object_pairs_hook=OrderedDict)
 
