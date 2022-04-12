@@ -1,5 +1,6 @@
 import json, os
 import pygama.pargen.energy_optimising as om
+from utils import run_splitter
 import pygama.analysis.peak_fitting as pgf
 from collections import OrderedDict
 import argparse
@@ -76,7 +77,7 @@ else:
 with open(args.raw_filelist) as f:
     file_list = f.read().splitlines()
 
-raw_file = sorted(om.run_splitter(file_list), key=len)[-1]
+raw_file = sorted(run_splitter(file_list), key=len)[-1]
 
 main_config = os.path.join(f"{args.metadata}", "main_config.json")
 

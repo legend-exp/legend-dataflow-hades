@@ -1,5 +1,6 @@
 import json, os
 import pygama.pargen.energy_optimising as om
+from utils import run_splitter
 import pygama.analysis.peak_fitting as pgf
 from collections import OrderedDict
 import pickle
@@ -43,7 +44,7 @@ peak_idx = np.where(peaks_keV == args.peak)[0][0]
 with open(args.raw_files) as f:
     files = f.read().splitlines()
 
-raw_files = sorted(om.run_splitter(files), key=len)[-1]
+raw_files = sorted(run_splitter(files), key=len)[-1]
 
 main_config = os.path.join(f"{args.metadata}", "main_config.json")
 
