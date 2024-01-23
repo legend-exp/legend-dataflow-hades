@@ -17,9 +17,12 @@ files = glob.glob(fn_glob_pattern)
 
 keys = []
 for f in files:
-    d = tier0_pattern_rx.match(f).groupdict()
-    key = smk.io.expand(f"{key_pattern()}", detector = d["detector"], measurement = d["measurement"], run = d["run"], timestamp = d["timestamp"])[0]
-    keys.append(key)
+    m  = tier0_pattern_rx.match(f)
+    if m is not None:
+
+        d = m.groupdict()
+        key = smk.io.expand(f"{key_pattern()}", detector = d["detector"], measurement = d["measurement"], run = d["run"], timestamp = d["timestamp"])[0]
+        keys.append(key)
 
 with open(snakemake.output[0], 'w') as f:
     for key in keys:

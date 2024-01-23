@@ -19,6 +19,11 @@ def gendata_path(setup):
 def metadata_path(setup):
     return setup["paths"]["meta"]
 
+def pargendata_path(setup):
+    return setup["paths"]["pargen"]
+
+def plot_path(setup):
+    return setup["paths"]["plots"]
 
 def runcmd(setup, envname):
     envcfg = setup["execenv"][envname]
@@ -38,6 +43,56 @@ def tier_fn_pattern(setup, tier):
         return os.path.join(f"{origdata_path(setup)}", "{detector}", "tier0", "{measurement}", "char_data-{detector}-{measurement}-run{run}-{timestamp}.fcio")
     else:
         return os.path.join(f"{gendata_path(setup)}", "{detector}", tier, "{measurement}", "char_data-{detector}-{measurement}-run{run}-{timestamp}_" + tier + ".lh5")
+
+def dsp_pars_fn_pattern(setup):
+    return os.path.join(f"{pargendata_path(setup)}", "dsp_proc_pars", "dsp_pp-{detector}-tier2.json")
+
+def dsp_pars_e_fn_pattern(setup):
+    return os.path.join(f"{pargendata_path(setup)}", "dsp_proc_pars", "dsp_pp_e-{detector}-tier2.json")
+
+def opt_grids_fn_pattern_combine(setup):
+    return os.path.join(f"{pargendata_path(setup)}", "dsp_proc_pars","energy_optimising","{{detector}}", "peak_grids", "{peak}.pkl" )
+
+def opt_grids_fn_pattern(setup):
+    return os.path.join(f"{pargendata_path(setup)}", "dsp_proc_pars","energy_optimising", "{detector}", "peak_grids", "{peak}.pkl" )
+
+def qbb_grid_fn_pattern(setup):
+    return os.path.join(f"{pargendata_path(setup)}", "dsp_proc_pars","energy_optimising", "{detector}", "qbb_grid.pkl" )
+
+def best_e_res_fn_pattern(setup):
+    return os.path.join(f"{pargendata_path(setup)}", "dsp_proc_pars","energy_optimising", "{detector}", "fwhms.json" )
+
+def opt_plots_fn_pattern(setup):
+    return os.path.join(f"{plot_path(setup)}", "{detector}", "energy_optimising" )
+
+def tau_plots_fn_pattern(setup):
+    return os.path.join(f"{plot_path(setup)}", "{detector}", "pz_preprocess","slope.pdf" )
+
+def ecal_fn_pattern(setup):
+    return os.path.join(f"{pargendata_path(setup)}", "hit_pproc", "ecal","all_sources","ecal-{detector}-{measurement}.json")
+
+def ecal_fn_pattern_sub(setup, detector, measurement):
+    return os.path.join(f"{pargendata_path(setup)}", "hit_pproc", "ecal","all_sources",f'ecal-{detector}-{measurement}.json')
+
+def th_ecal_fn_pattern(setup):
+    return os.path.join(f"{pargendata_path(setup)}", "hit_pproc", "ecal","all_sources","ecal-{detector}-th_HS2_top_psa.json")
+
+def ecal_th_fn_pattern(setup):
+    return os.path.join(f"{pargendata_path(setup)}", "hit_pproc", "ecal","th_ecal-{detector}.json")
+
+def ecal_plots_fn_pattern(setup):
+    return os.path.join(f"{plot_path(setup)}", "{detector}", "ecal", "{measurement}")
+
+def ecal_plots_fn_pattern_th(setup):
+    return os.path.join(f"{plot_path(setup)}", "{detector}", "ecal", "th_HS2_top_psa")
+
+def aoe_cal_fn_pattern(setup):
+    return os.path.join(f"{pargendata_path(setup)}", "hit_pproc", "aoe_cal","aoecal-{detector}.json")
+
+def aoe_plots_fn_pattern(setup):
+    return os.path.join(f"{plot_path(setup)}", "{detector}", "aoe","{detector}.pdf" )
+
+
 
 
 def parse_keypart(keypart):
@@ -102,3 +157,23 @@ def subst_vars_in_snakemake_config(workflow, config):
         var_values = {'_': os.path.dirname(config_filename)},
         use_env = True, ignore_missing = False
     )
+
+def run_splitter(files):
+    """
+    Returns list containing lists of each run
+    """
+    
+    runs = []
+    run_files = []
+    for file in files:
+        base=os.path.basename(file)
+        file_name = os.path.splitext(base)[0]
+        parts = file_name.split('-')
+        run_no = parts[3]
+        if run_no not in runs:
+            runs.append(run_no)
+            run_files.append([])
+        for i,run in enumerate(runs):
+            if run == run_no:
+                run_files[i].append(file) 
+    return run_files
