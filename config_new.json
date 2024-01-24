@@ -1,8 +1,10 @@
 {
   "setups": {
-    "l200_hades": {
+    "l200": {
       "paths": {
+        "sandbox_path": "",
         "tier_daq": "$_/generated/tier/daq",
+        "tier_raw_blind": "",
 
         "workflow": "$_/workflow",
 
@@ -14,13 +16,20 @@
 
         "tier": "$_/generated/tier",
         "tier_raw": "$_/generated/tier/raw",
+        "tier_tcm": "$_/generated/tier/tcm",
         "tier_dsp": "$_/generated/tier/dsp",
         "tier_hit": "$_/generated/tier/hit",
+        "tier_evt": "$_/generated/tier/evt",
+        "tier_pht": "$_/generated/tier/pht",
 
         "par": "$_/generated/par",
         "par_raw": "$_/generated/par/raw",
+        "par_tcm": "$_/generated/par/tcm",
         "par_dsp": "$_/generated/par/dsp",
         "par_hit": "$_/generated/par/hit",
+        "par_evt": "$_/generated/par/evt",
+        "par_pht": "$_/generated/par/pht",
+        "par_ecal": "$_/generated/par/ecal",
 
         "plt": "$_/generated/plt",
         "log": "$_/generated/log",
