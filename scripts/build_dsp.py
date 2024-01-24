@@ -3,7 +3,6 @@ import json
 import logging
 import os
 import pathlib
-import re
 import time
 
 os.environ["LGDO_CACHE"] = "false"
@@ -35,9 +34,9 @@ logging.getLogger("parse").setLevel(logging.INFO)
 log = logging.getLogger(__name__)
 
 configs = LegendMetadata(path=args.configs)
-channel_dict = configs.on(args.timestamp, system=args.datatype)["snakemake_rules"]["tier_dsp"][
+dsp_config = configs.on(args.timestamp, system=args.datatype)["snakemake_rules"]["tier_dsp"][
     "inputs"
-]["processing_chain"]
+]["processing_chain"][args.detector]
 
 if isinstance(args.pars_file, list):
     database_dic = Props.read_from(args.pars_file)
@@ -70,9 +69,8 @@ start = time.time()
 build_dsp(
     args.input,
     temp_output,
-    {},
+    dsp_config,
     database=database_dic,
-    chan_config=channel_dict,
     write_mode="r",
 )
 
@@ -82,12 +80,12 @@ os.rename(temp_output, args.output)
 
 key = os.path.basename(args.output).replace("-tier_dsp.lh5", "")
 
-raw_fields = [field.split("/")[-1] for field in lh5.ls(args.input, f"raw/")]
+raw_fields = [field.split("/")[-1] for field in lh5.ls(args.input, "raw/")]
 
 full_dict = {
     "valid_fields": {
         "raw": {"fields": raw_fields},
-        "dsp": Props.read_from(file)["outputs"],
+        "dsp": Props.read_from(dsp_config)["outputs"],
     },
 }
 pathlib.Path(os.path.dirname(args.db_file)).mkdir(parents=True, exist_ok=True)

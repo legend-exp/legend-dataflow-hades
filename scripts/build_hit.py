@@ -5,7 +5,6 @@ import os
 import pathlib
 import time
 
-import lgdo.lh5_store as lh5
 from legendmeta import LegendMetadata
 from legendmeta.catalog import Props
 from pygama.hit.build_hit import build_hit
@@ -40,10 +39,12 @@ configs = LegendMetadata(path=args.configs)
 if args.tier == "hit":
     channel_dict = configs.on(args.timestamp)["snakemake_rules"]["tier_hit"]["inputs"][
         "hit_config"
-    ]
+    ][args.detector]
 else:
     msg = "unknown tier"
     raise ValueError(msg)
+
+cfg_dict = Props.read_from(channel_dict)
 
 if isinstance(args.pars_file, list):
     pars_dict = Props.read_from(args.pars_file)
@@ -51,26 +52,16 @@ else:
     with open(args.pars_file) as f:
         pars_dict = json.load(f)
 
-pars_dict = {chan: chan_dict["pars"] for chan, chan_dict in pars_dict.items()}
-
-hit_dict = {}
-channels_present = lh5.ls(args.input)
-for channel in pars_dict:
-    if channel in channel_dict:
-        with open(channel_dict[channel]) as r:
-            cfg_dict = json.load(r)
-        Props.add_to(pars_dict[channel], cfg_dict)
-    if channel in channels_present:
-        hit_dict[f"{channel}/dsp"] = pars_dict[channel]
+Props.add_to(pars_dict, cfg_dict)
 
 t_start = time.time()
 pathlib.Path(os.path.dirname(args.output)).mkdir(parents=True, exist_ok=True)
-build_hit(args.input, lh5_tables_config=hit_dict, outfile=args.output)
+build_hit(args.input, hit_config=pars_dict, outfile=args.output)
 t_elap = time.time() - t_start
 log.info(f"Done!  Time elapsed: {t_elap:.2f} sec.")
 
 full_dict = {
-    "valid_fields": {args.tier: Props.read_from(file)["outputs"]},
+    "valid_fields": {args.tier: pars_dict["outputs"]},
 }
 
 pathlib.Path(os.path.dirname(args.db_file)).mkdir(parents=True, exist_ok=True)

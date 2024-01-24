@@ -1,23 +1,4 @@
 import argparse
-import os
-import pathlib
-
-import numpy as np
-from pygama.io.fcdaq import *
-
-argparser = argparse.ArgumentParser()
-argparser.add_argument("input", help="input file", type=str)
-argparser.add_argument("output", help="output file", type=str)
-args = argparser.parse_args()
-
-pathlib.Path(os.path.dirname(args.output)).mkdir(parents=True, exist_ok=True)
-
-# ToDo: Atomic file creation
-
-process_flashcam(args.input, args.output, np.inf)
-
-
-import argparse
 import logging
 import os
 import pathlib

@@ -7,53 +7,59 @@ import os
 from .utils import (
     par_dsp_path,
     par_hit_path,
-    #par_overwrite_path,
+    # par_overwrite_path,
     pars_path,
     plts_path,
     tier_daq_path,
-    tier_raw_path,
     tier_dsp_path,
     tier_hit_path,
     tier_path,
+    tier_raw_path,
     tmp_log_path,
     tmp_par_path,
     tmp_plts_path,
 )
 
+
 def key_pattern():
     return "{experiment}-{detector}-{measurement}-{run}-{timestamp}"
+
 
 def par_pattern():
     pattern = key_pattern()
     pattern.replace("{timestamp}", "T%Z%")
     return pattern
 
+
 def get_pattern_tier_daq(setup):
     return os.path.join(
         f"{tier_daq_path(setup)}",
         "{detector}",
-        key_pattern()+".fcio",
+        key_pattern() + ".fcio",
     )
+
 
 def get_pattern_tier_raw(setup):
     return os.path.join(
         f"{tier_raw_path(setup)}",
         "{detector}",
-        key_pattern()+"-tier_raw.lh5",
+        key_pattern() + "-tier_raw.lh5",
     )
+
 
 def get_pattern_tier_dsp(setup):
     return os.path.join(
         f"{tier_dsp_path(setup)}",
         "{detector}",
-        key_pattern()+"-tier_dsp.lh5",
+        key_pattern() + "-tier_dsp.lh5",
     )
+
 
 def get_pattern_tier_hit(setup):
     return os.path.join(
         f"{tier_hit_path(setup)}",
         "{detector}",
-        key_pattern()+"-tier_hit.lh5",
+        key_pattern() + "-tier_hit.lh5",
     )
 
 
@@ -73,19 +79,20 @@ def get_pattern_tier(setup, tier, check_in_cycle=True):
         return "/tmp/" + key_pattern() + f"tier_{tier}.lh5"
     else:
         return file_pattern
-    
+
+
 def get_pattern_par_dsp(setup, name=None, extension="json"):
     if name is not None:
         return os.path.join(
             f"{par_dsp_path(setup)}",
             "{detector}",
-            par_pattern()+f"-par_dsp_{name}.{extension}",
+            par_pattern() + f"-par_dsp_{name}.{extension}",
         )
     else:
         return os.path.join(
             f"{par_dsp_path(setup)}",
             "{detector}",
-            par_pattern()+f"-par_dsp.{extension}",
+            par_pattern() + f"-par_dsp.{extension}",
         )
 
 
@@ -94,15 +101,16 @@ def get_pattern_par_hit(setup, name=None, extension="json"):
         return os.path.join(
             f"{par_hit_path(setup)}",
             "{detector}",
-            par_pattern()+f"-par_hit_{name}.{extension}",
+            par_pattern() + f"-par_hit_{name}.{extension}",
         )
     else:
         return os.path.join(
             f"{par_hit_path(setup)}",
             "{detector}",
-            par_pattern()+f"-par_hit.{extension}",
+            par_pattern() + f"-par_hit.{extension}",
         )
-    
+
+
 def get_pattern_pars(setup, tier, name=None, extension="json", check_in_cycle=True):
     if tier == "dsp":
         file_pattern = get_pattern_par_dsp(setup, name, extension)
@@ -113,15 +121,13 @@ def get_pattern_pars(setup, tier, name=None, extension="json", check_in_cycle=Tr
         raise Exception(msg)
     if pars_path(setup) not in file_pattern and check_in_cycle is True:
         if name is None:
-            
-            return "/tmp/"+ par_pattern() + f"par_{tier}.{extension}"
+            return "/tmp/" + par_pattern() + f"par_{tier}.{extension}"
         else:
-            return (
-                "/tmp/"+ par_pattern() + f"-par_{tier}_{name}.{extension}",
-            )
+            return ("/tmp/" + par_pattern() + f"-par_{tier}_{name}.{extension}",)
     else:
         return file_pattern
-    
+
+
 def get_pattern_pars_tmp(setup, tier, name=None):
     if name is None:
         return os.path.join(
@@ -133,7 +139,8 @@ def get_pattern_pars_tmp(setup, tier, name=None):
             f"{tmp_par_path(setup)}",
             par_pattern() + f"par_{tier}_{name}.json",
         )
-    
+
+
 def get_pattern_plts_tmp_channel(setup, tier, name=None):
     if name is None:
         return os.path.join(
@@ -161,7 +168,8 @@ def get_pattern_plts(setup, tier, name=None):
             "{detector}",
             par_pattern() + f"plt_{tier}_{name}.pkl",
         )
-    
+
+
 def get_pattern_log(setup, processing_step):
     return os.path.join(
         f"{tmp_log_path(setup)}",
@@ -169,12 +177,14 @@ def get_pattern_log(setup, processing_step):
         key_pattern() + f"-{processing_step}.log",
     )
 
+
 def get_pattern_log_par(setup, processing_step):
     return os.path.join(
         f"{tmp_log_path(setup)}",
         processing_step,
         par_pattern() + f"-{processing_step}.log",
     )
+
 
 # def dsp_pars_fn_pattern(setup):
 #     return os.path.join(f"{pargendata_path(setup)}", "dsp_proc_pars", "dsp_pp-{detector}-tier2.json")
@@ -223,26 +233,3 @@ def get_pattern_log_par(setup, processing_step):
 
 # def aoe_plots_fn_pattern(setup):
 #     return os.path.join(f"{plot_path(setup)}", "{detector}", "aoe","{detector}.pdf" )
-
-
-
-
-def parse_keypart(keypart):
-    keypart_rx = re.compile('(-(?P<detector>[^-]+)(\\-(?P<measurement>[^-]+)(\\-(?P<run>[^-]+)(\\-(?P<timestamp>[^-]+))?)?)?)?$')
-    d = keypart_rx.match(keypart).groupdict()
-    for key in d:
-        if d[key] is None:
-            d[key] = "*"
-    return d
-
-
-def tier_files(setup, dataset_file, tier):
-    key_pattern_rx = re.compile(smk.io.regex(key_pattern()))
-    fn_pattern = tier_fn_pattern(setup, tier)
-    files = []
-    with open(dataset_file) as f:
-        for line in f:
-            d = key_pattern_rx.match(line.strip()).groupdict()
-            tier_filename = smk.io.expand(fn_pattern, detector = d["detector"], measurement = d["measurement"], run = d["run"], timestamp = d["timestamp"])[0]
-            files.append(tier_filename)
-    return files

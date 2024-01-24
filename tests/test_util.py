@@ -1,17 +1,13 @@
 import json
-import os
 from pathlib import Path
 
 from scripts.util import (
-    CalibCatalog,
     FileKey,
     subst_vars,
     unix_time,
 )
-from scripts.util.patterns import get_pattern_tier_daq, get_pattern_tier_dsp
+from scripts.util.patterns import get_pattern_tier_dsp
 from scripts.util.utils import (
-    par_dsp_path,
-    par_overwrite_path,
     tier_dsp_path,
     tier_path,
 )

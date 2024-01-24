@@ -19,7 +19,6 @@ import sklearn.gaussian_process.kernels as ker
 from legendmeta import LegendMetadata
 from legendmeta.catalog import Props
 from pygama.pargen.dsp_optimize import run_one_dsp
-from pygama.pargen.utils import get_tcm_pulser_ids
 
 argparser = argparse.ArgumentParser()
 argparser.add_argument("--raw_filelist", help="raw_filelist", type=str)
@@ -137,7 +136,7 @@ if opt_dict.pop("run_eopt") is True:
     sto = lh5.LH5Store()
     idx_events, idx_list = om.event_selection(
         raw_files,
-        f"raw",
+        "raw",
         dsp_config,
         db_dict,
         peaks_keV,
@@ -150,7 +149,7 @@ if opt_dict.pop("run_eopt") is True:
     )
 
     tb_data = sto.read_object(
-        f"raw",
+        "raw",
         raw_files,
         idx=idx_events,
         n_rows=opt_dict["n_events"],

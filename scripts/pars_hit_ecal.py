@@ -9,7 +9,6 @@ import pickle as pkl
 from datetime import datetime
 
 import lgdo.lh5_store as lh5
-import matplotlib as mpl
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
@@ -19,11 +18,14 @@ from legendmeta.catalog import Props
 from matplotlib.colors import LogNorm
 from pygama.pargen.ecal_th import *  # noqa: F403
 from pygama.pargen.ecal_th import apply_cuts, calibrate_parameter
-from pygama.pargen.utils import get_tcm_pulser_ids, load_data
+from pygama.pargen.utils import load_data
 from scipy.stats import binned_statistic
 
 # need to include other sources
-#from pygama.pargen.ecal_other_sources import energy_cal_am, energy_cal_ba, energy_cal_co
+# from pygama.pargen.ecal_other_sources import energy_cal_am, energy_cal_ba, energy_cal_co
+
+log = logging.getLogger(__name__)
+
 
 def plot_baseline_timemap(
     data,
@@ -117,6 +119,7 @@ def baseline_tracking_plots(files, lh5_path, plot_options=None):
         else:
             plot_dict[key] = item["function"](data)
     return plot_dict
+
 
 def energy_cal_th(
     data: pd.Dataframe,
@@ -227,7 +230,7 @@ if __name__ == "__main__":
     # load data in
     data, threshold_mask = load_data(
         args.files,
-        f"dsp",
+        "dsp",
         hit_dict,
         params=kwarg_dict["energy_params"]
         + list(kwarg_dict["cut_parameters"])
@@ -240,7 +243,7 @@ if __name__ == "__main__":
     data["is_pulser"] = np.zeros(len(data))
 
     # run energy calibration
-    
+
     if args.measurement == "th_HS2_top_psa" or args.measurement == "th_HS2_lat_psa":
         out_dict, result_dict, plot_dict, ecal_object = energy_cal_th(
             data,
@@ -261,13 +264,12 @@ if __name__ == "__main__":
     #         files, energy_params, plot_path=plot_path, cut_parameters=cut_parameters
     #     )
     else:
-        raise RuntimeError(f"calibration not currently implemented for {args.measurement}")
+        error_msg = f"calibration not currently implemented for {args.measurement}"
+        raise RuntimeError(error_msg)
 
     # get baseline plots and save all plots to file
     if args.plot_path:
-        common_dict = baseline_tracking_plots(
-            sorted(args.files), "dsp", plot_options=bl_plots
-        )
+        common_dict = baseline_tracking_plots(sorted(args.files), "dsp", plot_options=bl_plots)
 
         for plot in list(common_dict):
             if plot not in common_plots:

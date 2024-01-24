@@ -16,7 +16,10 @@ from .utils import unix_time
 
 # key_pattern -> key
 
-class FileKey(namedtuple("FileKey", ["experiment", "detector", "measurement", "run",  "timestamp"])):
+
+class FileKey(
+    namedtuple("FileKey", ["experiment", "detector", "measurement", "run", "timestamp"])
+):
     __slots__ = ()
 
     re_pattern = "(-(?P<experiment>[^-]+)(\\-(?P<detector>[^-]+)(\\-(?P<measurement>[^-]+)(\\-(?P<run>[^-]+)(\\-(?P<timestamp>[^-]+))?)?)?)?)?$"
@@ -164,4 +167,3 @@ class ProcessingFileKey(FileKey):
                     else:
                         kwargs.pop(entry)
             return smk.io.expand(pattern, **self._asdict(), **kwargs)
-

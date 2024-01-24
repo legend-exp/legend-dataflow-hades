@@ -22,7 +22,7 @@ rule build_pars_dsp_tau:
         get_th_filelist_firstentry,
     params:
         #timestamp="{timestamp}",
-        detector="{detector}"
+        detector="{detector}",
     output:
         decay_const=temp(get_pattern_pars_tmp(setup, "dsp", "decay_constant")),
         plots=temp(get_pattern_plts_tmp(setup, "dsp", "decay_constant")),
@@ -87,12 +87,10 @@ rule build_pars_dsp_eopt:
         inplots=get_pattern_plts_tmp_channel(setup, "dsp", "noise_optimization"),
     params:
         #timestamp="{timestamp}",
-        detector="{detector}"
+        detector="{detector}",
     output:
         dsp_pars=temp(get_pattern_pars(setup, "dsp")),
-        qbb_grid=temp(
-            get_pattern_pars(setup, "dsp", "objects", extension="pkl")
-        ),
+        qbb_grid=temp(get_pattern_pars(setup, "dsp", "objects", extension="pkl")),
         plots=temp(get_pattern_plts(setup, "dsp")),
     log:
         get_pattern_log_par(setup, "pars_dsp_eopt"),
@@ -116,14 +114,13 @@ rule build_pars_dsp_eopt:
         "--final_dsp_pars {output.dsp_pars}"
 
 
-
 rule build_dsp:
     input:
         raw_file=get_pattern_tier_raw(setup),
-        pars_file= get_par_dsp_file
+        pars_file=get_par_dsp_file,
     params:
         timestamp="{timestamp}",
-        detector="{detector}"
+        detector="{detector}",
     output:
         tier_file=get_pattern_tier(setup, "dsp", check_in_cycle=check_in_cycle),
         db_file=get_pattern_pars_tmp(setup, "dsp_db"),

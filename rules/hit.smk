@@ -23,17 +23,15 @@ from scripts.util.patterns import (
 rule build_energy_calibration:
     input:
         files=lambda wildcards: read_filelist(wildcards, "dsp"),
-        ctc_dict= get_par_dsp_file,
+        ctc_dict=get_par_dsp_file,
     params:
         timestamp="{timestamp}",
         detector="{detector}",
-        source = "{measurement}"
+        source="{measurement}",
     output:
         ecal_file=temp(get_pattern_pars_tmp(setup, "hit", "energy_cal")),
         results_file=temp(
-            get_pattern_pars_tmp(
-                setup, "hit", "energy_cal_objects", extension="pkl"
-            )
+            get_pattern_pars_tmp(setup, "hit", "energy_cal_objects", extension="pkl")
         ),
         plot_file=temp(get_pattern_plts_tmp(setup, "hit", "energy_cal")),
     # wildcard_constraints:
@@ -63,7 +61,8 @@ rule build_energy_calibration:
 rule build_aoe_calibration:
     input:
         files=os.path.join(
-            filelist_path(setup), "all-{experiment}-{detector}-th_HS2_top_psa-dsp.filelist"
+            filelist_path(setup),
+            "all-{experiment}-{detector}-th_HS2_top_psa-dsp.filelist",
         ),
         ecal_file=get_pattern_pars_tmp(setup, "hit", "energy_cal"),
         eres_file=get_pattern_pars_tmp(
@@ -73,13 +72,11 @@ rule build_aoe_calibration:
     params:
         timestamp="{timestamp}",
         detector="{detector}",
-        source = "{measurement}"
+        source="{measurement}",
     output:
         hit_pars=temp(get_pattern_pars_tmp(setup, "hit", "aoe_cal")),
         aoe_results=temp(
-            get_pattern_pars_tmp(
-                setup, "hit", "aoe_cal_objects", extension="pkl"
-            )
+            get_pattern_pars_tmp(setup, "hit", "aoe_cal_objects", extension="pkl")
         ),
         plot_file=temp(get_pattern_plts_tmp(setup, "hit", "aoe_cal")),
     log:
@@ -110,17 +107,16 @@ rule build_aoe_calibration:
 rule build_lq_calibration:
     input:
         files=os.path.join(
-            filelist_path(setup), "all-{experiment}-{detector}-th_HS2_top_psa-dsp.filelist"
+            filelist_path(setup),
+            "all-{experiment}-{detector}-th_HS2_top_psa-dsp.filelist",
         ),
         ecal_file=get_pattern_pars_tmp(setup, "hit", "aoe_cal"),
-        eres_file=get_pattern_pars_tmp(
-            setup, "hit", "aoe_cal_objects", extension="pkl"
-        ),
+        eres_file=get_pattern_pars_tmp(setup, "hit", "aoe_cal_objects", extension="pkl"),
         inplots=get_pattern_plts_tmp_channel(setup, "hit", "aoe_cal"),
     params:
         timestamp="{timestamp}",
         detector="{detector}",
-        source = "{measurement}"
+        source="{measurement}",
     output:
         get_pattern_pars(setup, "hit", check_in_cycle=check_in_cycle),
         get_pattern_pars(
@@ -154,11 +150,11 @@ rule build_lq_calibration:
         "--ecal_file {input.ecal_file} "
         "{input.files}"
 
+
 rule build_hit:
     input:
         dsp_file=get_pattern_tier_dsp(setup),
-        pars_file=get_par_hit_file
-
+        pars_file=get_par_hit_file,
     output:
         tier_file=get_pattern_tier(setup, "hit", check_in_cycle=check_in_cycle),
         db_file=get_pattern_pars_tmp(setup, "hit_db"),

@@ -54,12 +54,12 @@ if kwarg_dict["run_tau"] is True:
         input_file = args.raw_files
 
     # get pulser mask from tcm files
-    data = lh5.load_dfs(input_file, ["daqenergy", "timestamp"], f"raw")
+    data = lh5.load_dfs(input_file, ["daqenergy", "timestamp"], "raw")
     threshold = kwarg_dict.pop("threshold")
-    cuts = np.where((data.daqenergy.to_numpy() > threshold))[0]
+    cuts = np.where(data.daqenergy.to_numpy() > threshold)[0]
 
     tb_data = sto.read_object(
-        f"raw",
+        "raw",
         input_file,
         idx=cuts,
         n_rows=kwarg_dict.pop("n_events"),

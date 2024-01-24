@@ -73,6 +73,7 @@ def detector_db_path(setup):
 def par_raw_path(setup):
     return setup["paths"]["par_raw"]
 
+
 def par_dsp_path(setup):
     return setup["paths"]["par_dsp"]
 
