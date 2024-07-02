@@ -1,8 +1,20 @@
-from scripts.utils import *
-import pathlib, os
+import pathlib, os, json, sys
+import scripts.util as ds
+from scripts.util.patterns import get_pattern_tier_daq
+from scripts.util.utils import (
+    subst_vars_in_snakemake_config,
+    runcmd,
+    config_path,
+    filelist_path,
+    metadata_path,
+)
+from datetime import datetime
+from collections import OrderedDict
 
 # Set with `snakemake --configfile=/path/to/your/config.json`
 # configfile: "have/to/specify/path/to/your/config.json"
+
+check_in_cycle = True
 
 subst_vars_in_snakemake_config(workflow, config)
 
@@ -13,70 +25,54 @@ swenv = runcmd(setup, "default")
 basedir = workflow.basedir
 
 
-localrules: do_nothing, autogen_keylist, gen_filelist, autogen_output
+setup = config["setups"]["l200"]
+configs = config_path(setup)
+meta = metadata_path(setup)
+swenv = runcmd(setup)
+basedir = workflow.basedir
 
-rule do_nothing:
-    input:
+
+include: "rules/common.smk"
+include: "rules/main.smk"
+include: "rules/raw.smk"
+include: "rules/dsp.smk"
+include: "rules/hit.smk"
 
 
-# Auto-generate "all[-{detector}[-{measurement}[-{run}[-{timestamp}]]]].keylist"
-# based on available tier0 files.
-rule autogen_keylist:
-    output:
-        "all{keypart,|-.*}.keylist"
-    params:
-        setup = lambda wildcards: setup
-    script:
-        "scripts/create_keylist.py"
+localrules:
+    gen_filelist,
+    autogen_output,
+
+
+onstart:
+    print("Starting workflow")
+
+
+onsuccess:
+    print("Workflow finished, no error")
+    shell("rm *.gen || true")
+    shell(f"rm {filelist_path(setup)}/* || true")
+
+
+# Placeholder, can email or maybe put message in slack
+onerror:
+    print("An error occurred :( ")
 
 
 checkpoint gen_filelist:
-    input:
-        "{label}.keylist"
+    """
+    This rule generates the filelist. It is a checkpoint so when it is run it will update
+    the dag passed on the files it finds as an output. It does this by taking in the search
+    pattern, using this to find all the files that match this pattern, deriving the keys from
+    the files found and generating the list of new files needed.
+    """
     output:
-        "{label}-{tier,[^-]+}.filelist"
+        os.path.join(filelist_path(setup), "{label}-{tier}.{extension}list"),
     params:
-        setup = lambda wildcards: setup
+        setup=lambda wildcards: setup,
+        search_pattern=lambda wildcards: get_pattern_tier_daq(setup),
+        basedir=basedir,
+        configs=configs,
+        chan_maps=chan_maps,
     script:
         "scripts/create_filelist.py"
-
-
-def read_filelist(wildcards):
-    with checkpoints.gen_filelist.get(label=wildcards.label, tier=wildcards.tier).output[0].open() as f:
-        return f.read().splitlines() 
-
-# Create "{label}-{tier}.gen", based on "{label}.keylist" via
-# "{label}-{tier}.filelist". Will implicitly trigger creation of all files
-# in "{label}-{tier}.filelist".
-# Example: "all[-{detector}[-{measurement}[-{run}[-{timestamp}]]]]-{tier}.gen":
-rule autogen_output:
-    input:
-        read_filelist
-    output:
-        "{label}-{tier,[^-]+}.gen"
-    run:
-        pathlib.Path(output[0]).touch()
-
-
-rule tier0_to_tier1:
-    input:
-        tier_fn_pattern(setup, "tier0")
-    output:
-        tier_fn_pattern(setup, "tier1")
-    group: "tier-1-2"
-    resources:
-        runtime=300
-    shell:
-        "{swenv} python3 {basedir}/scripts/tier0_to_tier1.py {input} {output}"
-
-
-rule tier1_to_tier2:
-    input:
-        tier_fn_pattern(setup, "tier1")
-    output:
-        tier_fn_pattern(setup, "tier2")
-    group: "tier-1-2"
-    resources:
-        runtime=300
-    shell:
-        "{swenv} python3 {basedir}/scripts/tier1_to_tier2.py --metadata {metadata} {input} {output}"
