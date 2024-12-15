@@ -24,6 +24,9 @@ from .utils import (
 def key_pattern():
     return "{experiment}-{detector}-{measurement}-{run}-{timestamp}"
 
+def processing_pattern():
+    return key_pattern()+"-{processing_step}"
+
 
 def par_pattern():
     pattern = key_pattern()
@@ -35,6 +38,7 @@ def get_pattern_tier_daq(setup):
     return os.path.join(
         f"{tier_daq_path(setup)}",
         "{detector}",
+        "{measurement}",
         key_pattern() + ".fcio",
     )
 
@@ -43,6 +47,7 @@ def get_pattern_tier_raw(setup):
     return os.path.join(
         f"{tier_raw_path(setup)}",
         "{detector}",
+        "{measurement}",
         key_pattern() + "-tier_raw.lh5",
     )
 
@@ -51,6 +56,7 @@ def get_pattern_tier_dsp(setup):
     return os.path.join(
         f"{tier_dsp_path(setup)}",
         "{detector}",
+        "{measurement}",
         key_pattern() + "-tier_dsp.lh5",
     )
 
@@ -59,6 +65,7 @@ def get_pattern_tier_hit(setup):
     return os.path.join(
         f"{tier_hit_path(setup)}",
         "{detector}",
+        "{measurement}",
         key_pattern() + "-tier_hit.lh5",
     )
 
@@ -86,12 +93,14 @@ def get_pattern_par_dsp(setup, name=None, extension="json"):
         return os.path.join(
             f"{par_dsp_path(setup)}",
             "{detector}",
+            "{measurement}",
             par_pattern() + f"-par_dsp_{name}.{extension}",
         )
     else:
         return os.path.join(
             f"{par_dsp_path(setup)}",
             "{detector}",
+            "{measurement}",
             par_pattern() + f"-par_dsp.{extension}",
         )
 
@@ -101,12 +110,14 @@ def get_pattern_par_hit(setup, name=None, extension="json"):
         return os.path.join(
             f"{par_hit_path(setup)}",
             "{detector}",
+            "{measurement}",
             par_pattern() + f"-par_hit_{name}.{extension}",
         )
     else:
         return os.path.join(
             f"{par_hit_path(setup)}",
             "{detector}",
+            "{measurement}",
             par_pattern() + f"-par_hit.{extension}",
         )
 
@@ -121,36 +132,37 @@ def get_pattern_pars(setup, tier, name=None, extension="json", check_in_cycle=Tr
         raise Exception(msg)
     if pars_path(setup) not in file_pattern and check_in_cycle is True:
         if name is None:
-            return "/tmp/" + par_pattern() + f"par_{tier}.{extension}"
+            return "/tmp/" + par_pattern() + f"-par_{tier}.{extension}"
         else:
             return ("/tmp/" + par_pattern() + f"-par_{tier}_{name}.{extension}",)
     else:
         return file_pattern
 
 
-def get_pattern_pars_tmp(setup, tier, name=None):
+def get_pattern_pars_tmp(setup, tier, name=None, extension="json"):
     if name is None:
         return os.path.join(
             f"{tmp_par_path(setup)}",
-            par_pattern() + f"par_{tier}.json",
+            par_pattern() + f"-par_{tier}.{extension}",
         )
     else:
         return os.path.join(
             f"{tmp_par_path(setup)}",
-            par_pattern() + f"par_{tier}_{name}.json",
+            par_pattern() + f"-par_{tier}_{name}.{extension}",
         )
 
 
-def get_pattern_plts_tmp_channel(setup, tier, name=None):
+def get_pattern_plts_tmp(setup, tier, name=None, extension="pkl"):
     if name is None:
         return os.path.join(
             f"{tmp_plts_path(setup)}",
-            par_pattern() + f"plt_{tier}_{name}.pkl",
+            par_pattern() + f"-plt_{tier}.{extension}",
+            
         )
     else:
         return os.path.join(
             f"{tmp_plts_path(setup)}",
-            par_pattern() + f"plt_{tier}.pkl",
+            par_pattern() + f"-plt_{tier}_{name}.{extension}",
         )
 
 
@@ -160,13 +172,15 @@ def get_pattern_plts(setup, tier, name=None):
             f"{plts_path(setup)}",
             tier,
             "{detector}",
-            par_pattern() + f"plt_{tier}.pkl",
+            "{measurement}",
+            par_pattern() + f"-plt_{tier}_{name}.pkl",
         )
     else:
         return os.path.join(
             f"{plts_path(setup)}",
             "{detector}",
-            par_pattern() + f"plt_{tier}_{name}.pkl",
+            "{measurement}",
+            par_pattern() + f"-plt_{tier}.pkl",
         )
 
 

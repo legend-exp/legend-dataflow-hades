@@ -10,7 +10,7 @@ os.environ["LGDO_BOUNDSCHECK"] = "false"
 os.environ["DSPEED_CACHE"] = "false"
 os.environ["DSPEED_BOUNDSCHECK"] = "false"
 
-import lgdo.lh5_store as lh5
+import lgdo.lh5 as lh5
 import numpy as np
 from legendmeta import LegendMetadata
 from legendmeta.catalog import Props
@@ -20,7 +20,8 @@ argparser = argparse.ArgumentParser()
 argparser.add_argument("--configs", help="configs path", type=str, required=True)
 argparser.add_argument("--log", help="log file", type=str)
 argparser.add_argument("--detector", help="detector", type=str, required=True)
-# argparser.add_argument("--timestamp", help="Timestamp", type=str, required=True)
+argparser.add_argument("--timestamp", help="Timestamp", type=str, required=True)
+argparser.add_argument("--measurement", help="measurement", type=str, required=True)
 argparser.add_argument("--plot_path", help="plot path", type=str, required=False)
 argparser.add_argument("--output_file", help="output file", type=str, required=True)
 argparser.add_argument("--raw_files", help="input files", nargs="*", type=str)
@@ -54,12 +55,12 @@ if kwarg_dict["run_tau"] is True:
         input_file = args.raw_files
 
     # get pulser mask from tcm files
-    data = lh5.load_dfs(input_file, ["daqenergy", "timestamp"], "raw")
+    data = lh5.read_as("char_data/raw", input_file,"pd",field_mask = ["daqenergy", "timestamp"])#[0].view_as()
     threshold = kwarg_dict.pop("threshold")
     cuts = np.where(data.daqenergy.to_numpy() > threshold)[0]
 
-    tb_data = sto.read_object(
-        "raw",
+    tb_data = sto.read(
+        "char_data/raw",
         input_file,
         idx=cuts,
         n_rows=kwarg_dict.pop("n_events"),

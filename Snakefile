@@ -18,14 +18,8 @@ check_in_cycle = True
 
 subst_vars_in_snakemake_config(workflow, config)
 
-setup = config["setups"]["l200hades"]
-metadata = metadata_path(setup)
-swenv = runcmd(setup, "default")
-
+setup = config["setups"]["l200_hades"]
 basedir = workflow.basedir
-
-
-setup = config["setups"]["l200"]
 configs = config_path(setup)
 meta = metadata_path(setup)
 swenv = runcmd(setup)
@@ -51,7 +45,7 @@ onstart:
 onsuccess:
     print("Workflow finished, no error")
     shell("rm *.gen || true")
-    shell(f"rm {filelist_path(setup)}/* || true")
+    #shell(f"rm {filelist_path(setup)}/* || true")
 
 
 # Placeholder, can email or maybe put message in slack
@@ -67,12 +61,11 @@ checkpoint gen_filelist:
     the files found and generating the list of new files needed.
     """
     output:
-        os.path.join(filelist_path(setup), "{label}-{tier}.{extension}list"),
+        os.path.join(filelist_path(setup), "{label}-{tier}.filelist"),
     params:
         setup=lambda wildcards: setup,
         search_pattern=lambda wildcards: get_pattern_tier_daq(setup),
         basedir=basedir,
         configs=configs,
-        chan_maps=chan_maps,
     script:
         "scripts/create_filelist.py"

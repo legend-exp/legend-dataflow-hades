@@ -14,15 +14,17 @@ from scripts.util.patterns import (
     get_pattern_pars_tmp,
     get_pattern_log,
     get_pattern_pars,
+    get_pattern_log_par,
 )
 
 
 rule build_pars_dsp_tau:
     input:
-        get_th_filelist_firstentry,
+        files = get_th_filelist_firstentry,
     params:
-        #timestamp="{timestamp}",
+        timestamp="{timestamp}",
         detector="{detector}",
+        measurement="{measurement}",
     output:
         decay_const=temp(get_pattern_pars_tmp(setup, "dsp", "decay_constant")),
         plots=temp(get_pattern_plts_tmp(setup, "dsp", "decay_constant")),
@@ -39,6 +41,7 @@ rule build_pars_dsp_tau:
         "--log {log} "
         "--timestamp {params.timestamp} "
         "--detector {params.detector} "
+        "--measurement {params.measurement} "
         "--plot_path {output.plots} "
         "--output_file {output.decay_const} "
         "--raw_files {input.files}"
@@ -83,15 +86,16 @@ rule build_pars_dsp_tau:
 rule build_pars_dsp_eopt:
     input:
         files=get_th_filelist_longest_run,
-        decay_const=get_pattern_pars_tmp_channel(setup, "dsp", "noise_optimization"),
-        inplots=get_pattern_plts_tmp_channel(setup, "dsp", "noise_optimization"),
+        decay_const=get_pattern_pars_tmp(setup, "dsp", "decay_constant"),
+        inplots=get_pattern_plts_tmp(setup, "dsp", "decay_constant"),
     params:
-        #timestamp="{timestamp}",
+        timestamp="{timestamp}",
         detector="{detector}",
+        measurement="{measurement}",
     output:
-        dsp_pars=temp(get_pattern_pars(setup, "dsp")),
-        qbb_grid=temp(get_pattern_pars(setup, "dsp", "objects", extension="pkl")),
-        plots=temp(get_pattern_plts(setup, "dsp")),
+        dsp_pars=get_pattern_pars(setup, "dsp"),
+        out_obj=get_pattern_pars(setup, "dsp", "objects", extension="pkl"),
+        plots=get_pattern_plts(setup, "dsp"),
     log:
         get_pattern_log_par(setup, "pars_dsp_eopt"),
     group:
@@ -105,12 +109,12 @@ rule build_pars_dsp_eopt:
         "--configs {configs} "
         "--timestamp {params.timestamp} "
         "--detector {params.detector} "
+        "--measurement {params.measurement} "
         "--raw_filelist {input.files} "
-        "--tcm_filelist {input.tcm_filelist} "
         "--inplots {input.inplots} "
         "--decay_const {input.decay_const} "
         "--plot_path {output.plots} "
-        "--qbb_grid_path {output.qbb_grid} "
+        "--out_obj {output.out_obj} "
         "--final_dsp_pars {output.dsp_pars}"
 
 
