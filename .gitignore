@@ -1,4 +1,6 @@
 # New additions go at the top!
+generated
+inputs
 *.c
 .DS_Store
 *.npz
