@@ -24,8 +24,9 @@ from .utils import (
 def key_pattern():
     return "{experiment}-{detector}-{measurement}-{run}-{timestamp}"
 
+
 def processing_pattern():
-    return key_pattern()+"-{processing_step}"
+    return key_pattern() + "-{processing_step}"
 
 
 def par_pattern():

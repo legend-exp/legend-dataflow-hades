@@ -117,9 +117,9 @@ logging.getLogger("h5py").setLevel(logging.INFO)
 logging.getLogger("matplotlib").setLevel(logging.INFO)
 
 configs = LegendMetadata(path=args.configs)
-channel_dict = configs.on(args.timestamp)["snakemake_rules"][
-    "pars_hit_lqcal"
-]["inputs"]["lqcal_config"][args.detector]
+channel_dict = configs.on(args.timestamp)["snakemake_rules"]["pars_hit_lqcal"]["inputs"][
+    "lqcal_config"
+][args.detector]
 
 kwarg_dict = Props.read_from(channel_dict)
 
