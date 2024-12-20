@@ -30,7 +30,9 @@ lint.extend-ignore = [
   "PLR",    # Design related pylint codes
   "E501",   # Line too long
   "RET505", # Unnecessary `else` after `return` statement
-  "E402", # Module level imports at top of file need disable for numba default imports
+  "E402",   # Module level imports at top of file need disable for numba default imports
+  "RUF022", # Sort '__all__'
+  "I001",   # Import block is un-sorted or un-formatted
 ]
 target-version = "py37"
 src = ["src"]

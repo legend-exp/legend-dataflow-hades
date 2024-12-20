@@ -10,6 +10,7 @@ from datetime import datetime
 import warnings
 
 import lgdo.lh5 as lh5
+import maplotlib as mpl
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
