@@ -208,8 +208,10 @@ def unix_time(value):
         msg = f"Can't convert type {type(value)} to unix time"
         raise ValueError(msg)
 
+
 def convert_to_legend_timestamp(value):
-    return datetime.strftime(datetime.strptime(value, "%y%m%dT%H%M%S"),"%Y%m%dT%H%M%SZ")
+    return datetime.strftime(datetime.strptime(value, "%y%m%dT%H%M%S"), "%Y%m%dT%H%M%SZ")
+
 
 def convert_to_daq_timestamp(value):
-    return datetime.strftime(datetime.strptime(value, "%Y%m%dT%H%M%SZ"),"%y%m%dT%H%M%S")
+    return datetime.strftime(datetime.strptime(value, "%Y%m%dT%H%M%SZ"), "%y%m%dT%H%M%S")

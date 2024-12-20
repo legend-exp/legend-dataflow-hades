@@ -32,6 +32,7 @@ sto = lh5.LH5Store()
 
 warnings.filterwarnings(action="ignore", category=RuntimeWarning)
 
+
 def plot_baseline_timemap(
     data,
     figsize=(12, 8),
@@ -117,7 +118,7 @@ def baseline_tracking_plots(files, lh5_path, plot_options=None):
     if plot_options is None:
         plot_options = {}
     plot_dict = {}
-    data = lh5.read_as(lh5_path, files, "pd",field_mask=["bl_mean", "baseline", "timestamp"])
+    data = lh5.read_as(lh5_path, files, "pd", field_mask=["bl_mean", "baseline", "timestamp"])
     for key, item in plot_options.items():
         if item["options"] is not None:
             plot_dict[key] = item["function"](data, **item["options"])
@@ -275,7 +276,9 @@ if __name__ == "__main__":
 
     # get baseline plots and save all plots to file
     if args.plot_path:
-        common_dict = baseline_tracking_plots(sorted(args.files), "char_data/dsp", plot_options=bl_plots)
+        common_dict = baseline_tracking_plots(
+            sorted(args.files), "char_data/dsp", plot_options=bl_plots
+        )
 
         for plot in list(common_dict):
             if plot not in common_plots:

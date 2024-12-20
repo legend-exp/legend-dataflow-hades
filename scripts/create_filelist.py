@@ -39,7 +39,7 @@ key = FileKey.parse_keypart(keypart)
 
 item_list = []
 for item in key:
-    _item = item#.split("_") if "_" in item and item != "char_data" else item
+    _item = item  # .split("_") if "_" in item and item != "char_data" else item
     if isinstance(_item, list):
         item_list.append(_item)
     else:

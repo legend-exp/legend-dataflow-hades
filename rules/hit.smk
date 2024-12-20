@@ -118,15 +118,15 @@ rule build_lq_calibration:
         detector="{detector}",
         source="{measurement}",
     output:
-        hit_pars = get_pattern_pars(setup, "hit", check_in_cycle=check_in_cycle),
-        lq_results = get_pattern_pars(
+        hit_pars=get_pattern_pars(setup, "hit", check_in_cycle=check_in_cycle),
+        lq_results=get_pattern_pars(
             setup,
             "hit",
             name="objects",
             extension="dir",
             check_in_cycle=check_in_cycle,
         ),
-        plot_file = get_pattern_plts(setup, "hit"),
+        plot_file=get_pattern_plts(setup, "hit"),
     log:
         get_pattern_log_par(setup, "pars_hit_lq_cal"),
     group:

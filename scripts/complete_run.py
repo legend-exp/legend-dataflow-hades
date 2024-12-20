@@ -165,7 +165,7 @@ def build_file_dbs(input_files, output_dir):
 setup = snakemake.params.setup
 basedir = snakemake.params.basedir
 
-#if os.getenv("PRODENV") in snakemake.params.filedb_path:
+# if os.getenv("PRODENV") in snakemake.params.filedb_path:
 #    file_db_config = {
 #        "data_dir": "$PRODENV",
 #        "tier_dirs": {
@@ -190,13 +190,13 @@ basedir = snakemake.params.basedir
 #            "hit": "char_data/hit"
 #        },
 #    }
-#else:
+# else:
 file_db_config = {
     "data_dir": "/",
     "tier_dirs": {
         "raw": ut.tier_raw_path(setup),
         "dsp": ut.tier_dsp_path(setup),
-        "hit": ut.tier_hit_path(setup)
+        "hit": ut.tier_hit_path(setup),
     },
     "file_format": {
         "raw": pat.get_pattern_tier(setup, "raw", check_in_cycle=False).replace(
@@ -207,13 +207,9 @@ file_db_config = {
         ),
         "hit": pat.get_pattern_tier(setup, "hit", check_in_cycle=False).replace(
             ut.tier_hit_path(setup), ""
-        )
+        ),
     },
-    "table_format": {
-        "raw": "char_data/raw",
-        "dsp": "char_data/dsp",
-        "hit": "char_data/hit"
-    },
+    "table_format": {"raw": "char_data/raw", "dsp": "char_data/dsp", "hit": "char_data/hit"},
 }
 
 check_log_files(

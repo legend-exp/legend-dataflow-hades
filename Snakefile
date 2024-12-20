@@ -45,7 +45,8 @@ onstart:
 onsuccess:
     print("Workflow finished, no error")
     shell("rm *.gen || true")
-    #shell(f"rm {filelist_path(setup)}/* || true")
+    # shell(f"rm {filelist_path(setup)}/* || true")
+
 
 
 # Placeholder, can email or maybe put message in slack

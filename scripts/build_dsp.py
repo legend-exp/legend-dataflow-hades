@@ -37,9 +37,9 @@ logging.getLogger("parse").setLevel(logging.INFO)
 log = logging.getLogger(__name__)
 
 configs = LegendMetadata(path=args.configs)
-dsp_config = configs.on(args.timestamp)["snakemake_rules"]["tier_dsp"][
-    "inputs"
-]["processing_chain"][args.detector]
+dsp_config = configs.on(args.timestamp)["snakemake_rules"]["tier_dsp"]["inputs"][
+    "processing_chain"
+][args.detector]
 
 if isinstance(args.pars_file, list):
     database_dic = Props.read_from(args.pars_file)
@@ -74,7 +74,7 @@ build_dsp(
     temp_output,
     dsp_config,
     lh5_tables=["char_data"],
-    database={"char_data":database_dic},
+    database={"char_data": database_dic},
     write_mode="r",
 )
 
