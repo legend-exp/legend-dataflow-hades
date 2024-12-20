@@ -21,9 +21,6 @@ rule build_raw:
         get_pattern_log(setup, "tier_raw"),
     group:
         "tier-raw"
-#    resources:
-#        mem_swap=110,
-#        runtime=300,
     shell:
         "{swenv} python3 -B "
         f"{workflow.source_path('../scripts/build_raw.py')} "
