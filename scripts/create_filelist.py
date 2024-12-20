@@ -6,6 +6,7 @@ import os
 
 from util.FileKey import FileKey
 from util.patterns import get_pattern_tier
+from util.utils import convert_to_legend_timestamp
 
 setup = snakemake.params.setup
 
@@ -38,7 +39,7 @@ key = FileKey.parse_keypart(keypart)
 
 item_list = []
 for item in key:
-    _item = item.split("_") if "_" in item else item
+    _item = item#.split("_") if "_" in item and item != "char_data" else item
     if isinstance(_item, list):
         item_list.append(_item)
     else:
@@ -53,13 +54,17 @@ for i in item_list[0]:
                     filekeys.append(FileKey(i, j, k, i2, j2))
 
 filenames = []
-fn_pattern = get_pattern_tier(setup, "raw", check_in_cycle=False)
+fn_pattern = get_pattern_tier(setup, tier, check_in_cycle=False)
 for key in filekeys:
     fn_glob_pattern = key.get_path_from_filekey(search_pattern)[0]
+    print(fn_glob_pattern)
     files = glob.glob(fn_glob_pattern)
     for f in files:
         _key = FileKey.get_filekey_from_pattern(f, search_pattern)
         filename = FileKey.get_path_from_filekey(_key, fn_pattern)
+        if len(_key.timestamp) == 13 and tier != "daq":
+            tstamp = convert_to_legend_timestamp(_key.timestamp)
+            filename = [filen.replace(_key.timestamp, tstamp) for filen in filename]
         if _key.name in ignore_keys:
             pass
         else:

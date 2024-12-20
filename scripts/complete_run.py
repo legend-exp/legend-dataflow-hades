@@ -120,7 +120,7 @@ def readable_json(dic, ncol=6, indent=4):
 
 def get_keys(input_files):
     def get_run(Filekey):
-        return f"{Filekey.experiment}-{Filekey.period}-{Filekey.run}-{Filekey.datatype}"
+        return f"{Filekey.experiment}-{Filekey.detector}-{Filekey.measurement}-{Filekey.run}"
 
     files = glob.glob(input_files)
     key_dict = {}
@@ -165,86 +165,56 @@ def build_file_dbs(input_files, output_dir):
 setup = snakemake.params.setup
 basedir = snakemake.params.basedir
 
-if os.getenv("PRODENV") in snakemake.params.filedb_path:
-    file_db_config = {
-        "data_dir": "$PRODENV",
-        "tier_dirs": {
-            "raw": ut.tier_raw_path(setup).replace(os.getenv("PRODENV"), ""),
-            "dsp": ut.tier_dsp_path(setup).replace(os.getenv("PRODENV"), ""),
-            "hit": ut.tier_hit_path(setup).replace(os.getenv("PRODENV"), ""),
-            "pht": ut.tier_pht_path(setup).replace(os.getenv("PRODENV"), ""),
-            "tcm": ut.tier_tcm_path(setup).replace(os.getenv("PRODENV"), ""),
-            "evt": ut.tier_evt_path(setup).replace(os.getenv("PRODENV"), ""),
-        },
-        "file_format": {
-            "raw": pat.get_pattern_tier(setup, "raw", check_in_cycle=False).replace(
-                ut.tier_raw_path(setup), ""
-            ),
-            "dsp": pat.get_pattern_tier(setup, "dsp", check_in_cycle=False).replace(
-                ut.tier_dsp_path(setup), ""
-            ),
-            "hit": pat.get_pattern_tier(setup, "hit", check_in_cycle=False).replace(
-                ut.tier_hit_path(setup), ""
-            ),
-            "pht": pat.get_pattern_tier(setup, "pht", check_in_cycle=False).replace(
-                ut.tier_hit_path(setup), ""
-            ),
-            "evt": pat.get_pattern_tier(setup, "evt", check_in_cycle=False).replace(
-                ut.tier_evt_path(setup), ""
-            ),
-            "tcm": pat.get_pattern_tier(setup, "tcm", check_in_cycle=False).replace(
-                ut.tier_tcm_path(setup), ""
-            ),
-        },
-        "table_format": {
-            "raw": "ch{ch:07d}/raw",
-            "dsp": "ch{ch:07d}/dsp",
-            "hit": "ch{ch:07d}/hit",
-            "pht": "ch{ch:07d}/hit",
-            "evt": "{grp}/evt",
-            "tcm": "hardware_tcm_1",
-        },
-    }
-else:
-    file_db_config = {
-        "data_dir": "/",
-        "tier_dirs": {
-            "raw": ut.tier_raw_path(setup),
-            "dsp": ut.tier_dsp_path(setup),
-            "hit": ut.tier_hit_path(setup),
-            "tcm": ut.tier_tcm_path(setup),
-            "pht": ut.tier_pht_path(setup),
-            "evt": ut.tier_evt_path(setup),
-        },
-        "file_format": {
-            "raw": pat.get_pattern_tier(setup, "raw", check_in_cycle=False).replace(
-                ut.tier_raw_path(setup), ""
-            ),
-            "dsp": pat.get_pattern_tier(setup, "dsp", check_in_cycle=False).replace(
-                ut.tier_dsp_path(setup), ""
-            ),
-            "hit": pat.get_pattern_tier(setup, "hit", check_in_cycle=False).replace(
-                ut.tier_hit_path(setup), ""
-            ),
-            "pht": pat.get_pattern_tier(setup, "pht", check_in_cycle=False).replace(
-                ut.tier_hit_path(setup), ""
-            ),
-            "evt": pat.get_pattern_tier(setup, "evt", check_in_cycle=False).replace(
-                ut.tier_evt_path(setup), ""
-            ),
-            "tcm": pat.get_pattern_tier(setup, "tcm", check_in_cycle=False).replace(
-                ut.tier_tcm_path(setup), ""
-            ),
-        },
-        "table_format": {
-            "raw": "ch{ch:07d}/raw",
-            "dsp": "ch{ch:07d}/dsp",
-            "hit": "ch{ch:07d}/hit",
-            "pht": "ch{ch:07d}/hit",
-            "evt": "{grp}/evt",
-            "tcm": "hardware_tcm_1",
-        },
-    }
+#if os.getenv("PRODENV") in snakemake.params.filedb_path:
+#    file_db_config = {
+#        "data_dir": "$PRODENV",
+#        "tier_dirs": {
+#            "raw": ut.tier_raw_path(setup).replace(os.getenv("PRODENV"), ""),
+#            "dsp": ut.tier_dsp_path(setup).replace(os.getenv("PRODENV"), ""),
+#            "hit": ut.tier_hit_path(setup).replace(os.getenv("PRODENV"), ""),
+#        },
+#        "file_format": {
+#            "raw": pat.get_pattern_tier(setup, "raw", check_in_cycle=False).replace(
+#                ut.tier_raw_path(setup), ""
+#            ),
+#            "dsp": pat.get_pattern_tier(setup, "dsp", check_in_cycle=False).replace(
+#                ut.tier_dsp_path(setup), ""
+#            ),
+#            "hit": pat.get_pattern_tier(setup, "hit", check_in_cycle=False).replace(
+#                ut.tier_hit_path(setup), ""
+#            )
+#        },
+#        "table_format": {
+#            "raw": "char_data/raw",
+#            "dsp": "char_data/dsp",
+#            "hit": "char_data/hit"
+#        },
+#    }
+#else:
+file_db_config = {
+    "data_dir": "/",
+    "tier_dirs": {
+        "raw": ut.tier_raw_path(setup),
+        "dsp": ut.tier_dsp_path(setup),
+        "hit": ut.tier_hit_path(setup)
+    },
+    "file_format": {
+        "raw": pat.get_pattern_tier(setup, "raw", check_in_cycle=False).replace(
+            ut.tier_raw_path(setup), ""
+        ),
+        "dsp": pat.get_pattern_tier(setup, "dsp", check_in_cycle=False).replace(
+            ut.tier_dsp_path(setup), ""
+        ),
+        "hit": pat.get_pattern_tier(setup, "hit", check_in_cycle=False).replace(
+            ut.tier_hit_path(setup), ""
+        )
+    },
+    "table_format": {
+        "raw": "char_data/raw",
+        "dsp": "char_data/dsp",
+        "hit": "char_data/hit"
+    },
+}
 
 check_log_files(
     snakemake.params.log_path,

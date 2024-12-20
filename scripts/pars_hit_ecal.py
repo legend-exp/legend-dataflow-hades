@@ -7,8 +7,9 @@ import os
 import pathlib
 import pickle as pkl
 from datetime import datetime
+import warnings
 
-import lgdo.lh5_store as lh5
+import lgdo.lh5 as lh5
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
@@ -25,7 +26,10 @@ from scipy.stats import binned_statistic
 # from pygama.pargen.ecal_other_sources import energy_cal_am, energy_cal_ba, energy_cal_co
 
 log = logging.getLogger(__name__)
+mpl.use("agg")
+sto = lh5.LH5Store()
 
+warnings.filterwarnings(action="ignore", category=RuntimeWarning)
 
 def plot_baseline_timemap(
     data,
@@ -112,7 +116,7 @@ def baseline_tracking_plots(files, lh5_path, plot_options=None):
     if plot_options is None:
         plot_options = {}
     plot_dict = {}
-    data = lh5.load_dfs(files, ["bl_mean", "baseline", "timestamp"], lh5_path)
+    data = lh5.read_as(lh5_path, files, "pd",field_mask=["bl_mean", "baseline", "timestamp"])
     for key, item in plot_options.items():
         if item["options"] is not None:
             plot_dict[key] = item["function"](data, **item["options"])
@@ -185,6 +189,7 @@ if __name__ == "__main__":
 
     argparser.add_argument("--detector", help="detector", type=str, required=True)
     argparser.add_argument("--measurement", help="measurement", type=str, required=True)
+    argparser.add_argument("--timestamp", help="timestamp", type=str, required=True)
     argparser.add_argument("--tier", help="tier", type=str, default="hit")
 
     argparser.add_argument("--log", help="log_file", type=str)
@@ -230,7 +235,7 @@ if __name__ == "__main__":
     # load data in
     data, threshold_mask = load_data(
         args.files,
-        "dsp",
+        "char_data/dsp",
         hit_dict,
         params=kwarg_dict["energy_params"]
         + list(kwarg_dict["cut_parameters"])
@@ -240,7 +245,7 @@ if __name__ == "__main__":
         cal_energy_param="trapTmax",
     )
 
-    data["is_pulser"] = np.zeros(len(data))
+    data["is_pulser"] = np.zeros(len(data), dtype=bool)
 
     # run energy calibration
 
@@ -269,7 +274,7 @@ if __name__ == "__main__":
 
     # get baseline plots and save all plots to file
     if args.plot_path:
-        common_dict = baseline_tracking_plots(sorted(args.files), "dsp", plot_options=bl_plots)
+        common_dict = baseline_tracking_plots(sorted(args.files), "char_data/dsp", plot_options=bl_plots)
 
         for plot in list(common_dict):
             if plot not in common_plots:

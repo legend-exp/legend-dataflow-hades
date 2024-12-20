@@ -1,0 +1,69 @@
+{
+  "setups": {
+    "l200_hades": {
+      "paths": {
+        "tier_daq": "$_/generated/tier/daq",
+
+        "workflow": "$_/workflow",
+
+        "metadata": "$_/inputs",
+        "config": "$_/inputs/dataprod/config",
+        "par_overwrite": "$_/inputs/dataprod/overrides",
+        "chan_map": "$_/inputs/hardware/configuration",
+        "detector_db": "$_/inputs/hardware/detectors",
+
+        "tier": "$_/generated/tier",
+        "tier_raw": "$_/generated/tier/raw",
+        "tier_dsp": "$_/generated/tier/dsp",
+        "tier_hit": "$_/generated/tier/hit",
+
+        "par": "$_/generated/par",
+        "par_raw": "$_/generated/par/raw",
+        "par_dsp": "$_/generated/par/dsp",
+        "par_hit": "$_/generated/par/hit",
+
+        "plt": "$_/generated/plt",
+        "log": "$_/generated/log",
+
+        "tmp_plt": "$_/generated/tmp/plt",
+        "tmp_log": "$_/generated/tmp/log",
+        "tmp_filelists": "$_/generated/tmp/filelists",
+        "tmp_par": "$_/generated/tmp/par",
+
+        "src": "$_/software/python/src",
+        "install": "$_/software/python/install",
+        "cache": "$_/software/python/cache"
+      },
+
+      "execenv": {
+        "cmd": "",
+        "arg": ""
+      },
+      "pkg_versions": {
+        "pygama": "pygama==1.4.3",
+        "pylegendmeta": "pylegendmeta==0.8.2",
+        "dspeed": "dspeed==1.2.0",
+        "legend-pydataobj": "legend-pydataobj==1.4.2",
+        "legend-daq2lh5": "legend-daq2lh5==1.1.0"
+      }
+    },
+    "l200": {
+      "paths": {
+        "src": "$_/software/python/src",
+          "install": "$_/software/python/install",
+          "cache": "$_/software/python/cache"
+      },
+      "execenv": {
+        "cmd": "",
+        "arg": ""
+      },
+      "pkg_versions": {
+        "pygama": "pygama==1.6.0a1",
+        "pylegendmeta": "pylegendmeta==0.9.0a2",
+        "dspeed": "dspeed==1.3.0a4",
+        "legend-pydataobj": "legend-pydataobj==1.5.0a5",
+        "legend-daq2lh5": "legend-daq2lh5==1.2.0a1"
+      }
+    }
+  }
+}

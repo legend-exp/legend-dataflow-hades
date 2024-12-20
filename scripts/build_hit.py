@@ -16,7 +16,6 @@ argparser.add_argument("--pars_file", help="hit pars file", nargs="*")
 argparser.add_argument("--configs", help="configs", type=str, required=True)
 argparser.add_argument("--detector", help="detector", type=str, required=True)
 argparser.add_argument("--timestamp", help="Timestamp", type=str, required=True)
-argparser.add_argument("--tier", help="Tier", type=str, required=True)
 
 argparser.add_argument("--log", help="log_file", type=str)
 
@@ -36,13 +35,13 @@ log = logging.getLogger(__name__)
 
 
 configs = LegendMetadata(path=args.configs)
-if args.tier == "hit":
-    channel_dict = configs.on(args.timestamp)["snakemake_rules"]["tier_hit"]["inputs"][
-        "hit_config"
-    ][args.detector]
-else:
-    msg = "unknown tier"
-    raise ValueError(msg)
+# if args.tier == "hit":
+channel_dict = configs.on(args.timestamp)["snakemake_rules"]["tier_hit"]["inputs"][
+    "hit_config"
+][args.detector]
+# else:
+#     msg = "unknown tier"
+#     raise ValueError(msg)
 
 cfg_dict = Props.read_from(channel_dict)
 
@@ -52,16 +51,16 @@ else:
     with open(args.pars_file) as f:
         pars_dict = json.load(f)
 
-Props.add_to(pars_dict, cfg_dict)
+Props.add_to(cfg_dict, pars_dict["pars"])
 
 t_start = time.time()
 pathlib.Path(os.path.dirname(args.output)).mkdir(parents=True, exist_ok=True)
-build_hit(args.input, hit_config=pars_dict, outfile=args.output)
+build_hit(args.input, hit_config=cfg_dict, outfile=args.output)
 t_elap = time.time() - t_start
 log.info(f"Done!  Time elapsed: {t_elap:.2f} sec.")
 
 full_dict = {
-    "valid_fields": {args.tier: pars_dict["outputs"]},
+    "valid_fields": {"hit": cfg_dict["outputs"]},
 }
 
 pathlib.Path(os.path.dirname(args.db_file)).mkdir(parents=True, exist_ok=True)

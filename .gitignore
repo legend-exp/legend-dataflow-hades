@@ -1,4 +1,7 @@
 # New additions go at the top!
+.snakemake/
+generated
+inputs
 *.c
 .DS_Store
 *.npz

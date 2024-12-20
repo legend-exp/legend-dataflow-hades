@@ -75,13 +75,13 @@ def aoe_calibration(
 if __name__ == "__main__":
     argparser = argparse.ArgumentParser()
     argparser.add_argument("files", help="files", nargs="*", type=str)
-    argparser.add_argument("--tcm_filelist", help="tcm_filelist", type=str, required=True)
     argparser.add_argument("--ecal_file", help="ecal_file", type=str, required=True)
     argparser.add_argument("--eres_file", help="eres_file", type=str, required=True)
     argparser.add_argument("--inplots", help="in_plot_path", type=str, required=False)
 
     argparser.add_argument("--configs", help="configs", type=str, required=True)
     argparser.add_argument("--detector", help="detector", type=str, required=True)
+    argparser.add_argument("--timestamp", help="timestamp", type=str, required=True)
     argparser.add_argument("--measurement", help="measurement", type=str, required=True)
 
     argparser.add_argument("--log", help="log_file", type=str)
@@ -99,7 +99,7 @@ if __name__ == "__main__":
     logging.getLogger("matplotlib").setLevel(logging.INFO)
 
     configs = LegendMetadata(path=args.configs)
-    channel_dict = configs.on(args.timestamp, system=args.datatype)["snakemake_rules"][
+    channel_dict = configs.on(args.timestamp)["snakemake_rules"][
         "pars_hit_aoecal"
     ]["inputs"]["aoecal_config"][args.detector]
 
@@ -130,7 +130,7 @@ if __name__ == "__main__":
 
         with open(args.files[0]) as f:
             files = f.read().splitlines()
-        files = sorted(files)
+        files = sorted(files)[:8]
 
         try:
             eres = eres_dict[kwarg_dict["cal_energy_param"]]["eres_linear"].copy()
@@ -165,14 +165,14 @@ if __name__ == "__main__":
         # load data in
         data, threshold_mask = load_data(
             files,
-            "dsp",
+            "char_data/dsp",
             cal_dict,
             params=params,
             threshold=kwarg_dict.pop("threshold"),
             return_selection_mask=True,
         )
 
-        data["is_pulser"] = np.zeros(len(data))
+        data["is_pulser"] = np.zeros(len(data), dtype=bool)
 
         cal_dict, out_dict, plot_dict, obj = aoe_calibration(
             data,

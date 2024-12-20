@@ -4,17 +4,20 @@ import logging
 import os
 import pathlib
 import time
+import warnings
 
 os.environ["LGDO_CACHE"] = "false"
 os.environ["LGDO_BOUNDSCHECK"] = "false"
 os.environ["DSPEED_CACHE"] = "false"
 os.environ["DSPEED_BOUNDSCHECK"] = "false"
 
-import lgdo.lh5_store as lh5
+import lgdo.lh5 as lh5
 import numpy as np
 from dspeed import build_dsp
 from legendmeta import LegendMetadata
 from legendmeta.catalog import Props
+
+warnings.filterwarnings(action="ignore", category=RuntimeWarning)
 
 argparser = argparse.ArgumentParser()
 argparser.add_argument("--configs", help="configs path", type=str, required=True)
@@ -34,7 +37,7 @@ logging.getLogger("parse").setLevel(logging.INFO)
 log = logging.getLogger(__name__)
 
 configs = LegendMetadata(path=args.configs)
-dsp_config = configs.on(args.timestamp, system=args.datatype)["snakemake_rules"]["tier_dsp"][
+dsp_config = configs.on(args.timestamp)["snakemake_rules"]["tier_dsp"][
     "inputs"
 ]["processing_chain"][args.detector]
 
@@ -70,7 +73,8 @@ build_dsp(
     args.input,
     temp_output,
     dsp_config,
-    database=database_dic,
+    lh5_tables=["char_data"],
+    database={"char_data":database_dic},
     write_mode="r",
 )
 
@@ -80,7 +84,7 @@ os.rename(temp_output, args.output)
 
 key = os.path.basename(args.output).replace("-tier_dsp.lh5", "")
 
-raw_fields = [field.split("/")[-1] for field in lh5.ls(args.input, "raw/")]
+raw_fields = [field.split("/")[-1] for field in lh5.ls(args.input, "char_data/raw/")]
 
 full_dict = {
     "valid_fields": {

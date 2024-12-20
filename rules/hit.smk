@@ -6,23 +6,24 @@ Snakemake rules for processing hit tier. This is done in 4 steps:
 - running build hit over all channels using par file
 """
 
-from scripts.util.pars_loading import pars_catalog
 from scripts.util.patterns import (
     get_pattern_plts_tmp,
     get_pattern_par_hit,
     get_pattern_plts,
+    get_pattern_par_dsp,
     get_pattern_tier_dsp,
     get_pattern_tier,
     get_pattern_pars_tmp,
     get_pattern_log,
     get_pattern_pars,
+    get_pattern_log_par,
 )
 
 
 # This rule builds the energy calibration using the calibration dsp files
 rule build_energy_calibration:
     input:
-        files=lambda wildcards: read_filelist(wildcards, "dsp"),
+        files=lambda wildcards: read_filelist_det(wildcards, "dsp"),
         ctc_dict=get_par_dsp_file,
     params:
         timestamp="{timestamp}",
@@ -94,7 +95,6 @@ rule build_aoe_calibration:
         "--timestamp {params.timestamp} "
         "--measurement {params.source} "
         "--inplots {input.inplots} "
-        "--channel {params.channel} "
         "--aoe_results {output.aoe_results} "
         "--eres_file {input.eres_file} "
         "--hit_pars {output.hit_pars} "
@@ -112,21 +112,21 @@ rule build_lq_calibration:
         ),
         ecal_file=get_pattern_pars_tmp(setup, "hit", "aoe_cal"),
         eres_file=get_pattern_pars_tmp(setup, "hit", "aoe_cal_objects", extension="pkl"),
-        inplots=get_pattern_plts_tmp_channel(setup, "hit", "aoe_cal"),
+        inplots=get_pattern_plts_tmp(setup, "hit", "aoe_cal"),
     params:
         timestamp="{timestamp}",
         detector="{detector}",
         source="{measurement}",
     output:
-        get_pattern_pars(setup, "hit", check_in_cycle=check_in_cycle),
-        get_pattern_pars(
+        hit_pars = get_pattern_pars(setup, "hit", check_in_cycle=check_in_cycle),
+        lq_results = get_pattern_pars(
             setup,
             "hit",
             name="objects",
             extension="dir",
             check_in_cycle=check_in_cycle,
         ),
-        get_pattern_plts(setup, "hit"),
+        plot_file = get_pattern_plts(setup, "hit"),
     log:
         get_pattern_log_par(setup, "pars_hit_lq_cal"),
     group:
@@ -142,7 +142,6 @@ rule build_lq_calibration:
         "--timestamp {params.timestamp} "
         "--measurement {params.source} "
         "--inplots {input.inplots} "
-        "--channel {params.channel} "
         "--lq_results {output.lq_results} "
         "--eres_file {input.eres_file} "
         "--hit_pars {output.hit_pars} "
@@ -172,7 +171,6 @@ rule build_hit:
         f"{workflow.source_path('../scripts/build_hit.py')} "
         "--configs {configs} "
         "--log {log} "
-        "--tier {params.tier} "
         "--detector {params.detector} "
         "--timestamp {params.timestamp} "
         "--pars_file {input.pars_file} "
