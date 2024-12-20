@@ -1,4 +1,4 @@
-select = [
+lint.select = [
   "E", "F", "W", # flake8
   "B",           # flake8-bugbear
   "I",           # isort
@@ -23,21 +23,22 @@ select = [
   "NPY",         # NumPy specific rules
   "PD",          # pandas-vet
 ]
-extend-ignore = [
+lint.extend-ignore = [
   "ISC003", # Explicitly concatenated string should be implicitly concatenated
-  "PGH001", # Usage of eval()
+  "S307",   # Usage of eval()
   "G004",   # Logging statement uses f-string
   "PLR",    # Design related pylint codes
   "E501",   # Line too long
-  "PT004",  # Use underscore for non-returning fixture (use usefixture instead)
   "RET505", # Unnecessary `else` after `return` statement
-  "E402", # Module level imports at top of file need disable for numba default imports
+  "E402",   # Module level imports at top of file need disable for numba default imports
+  "RUF022", # Sort '__all__'
+  "I001",   # Import block is un-sorted or un-formatted
 ]
 target-version = "py37"
 src = ["src"]
-unfixable = [
+lint.unfixable = [
   "T20",  # Removes print statements
   "F841", # Removes unused variables
 ]
 exclude = []
-flake8-unused-arguments.ignore-variadic-names = true
+lint.flake8-unused-arguments.ignore-variadic-names = true

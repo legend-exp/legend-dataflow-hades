@@ -157,7 +157,6 @@ def get_pattern_plts_tmp(setup, tier, name=None, extension="pkl"):
         return os.path.join(
             f"{tmp_plts_path(setup)}",
             par_pattern() + f"-plt_{tier}.{extension}",
-            
         )
     else:
         return os.path.join(

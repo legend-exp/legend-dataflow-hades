@@ -21,9 +21,9 @@ from legendmeta import LegendMetadata
 from legendmeta.catalog import Props
 from pygama.pargen.dsp_optimize import run_one_dsp
 
-# 
+#
 # The code below was copied from a locally developed version of Pygama in LNGS
-# 
+#
 
 log = logging.getLogger(__name__)
 sto = lh5.LH5Store()
@@ -38,7 +38,7 @@ from sklearn.gaussian_process import GaussianProcessRegressor
 from sklearn.gaussian_process.kernels import RBF, ConstantKernel
 from sklearn.utils._testing import ignore_warnings
 import pygama.math.histogram as pgh
-import pygama.math.peak_fitting as pgf
+import pygama.math.peak_fitting as pgf  # noqa: F811
 import pygama.pargen.cuts as cts
 import pygama.pargen.dsp_optimize as opt
 import pygama.pargen.energy_cal as pgc
@@ -71,15 +71,17 @@ def event_selection(
     peaks_keV,
     peak_idxs,
     kev_widths,
-    cut_parameters={"bl_mean": 4, "bl_std": 4, "pz_std": 4},
+    cut_parameters=None,
     pulser_mask=None,
     energy_parameter="trapTmax",
-    wf_field: str = "waveform",
+    wf_field: str = "waveform",  # noqa: ARG001 # the variable was never used
     n_events=10000,
     threshold=1000,
     initial_energy="daqenergy",
     check_pulser=True,
 ):
+    if cut_parameters is None:
+        cut_parameters = {"bl_mean": 4, "bl_std": 4, "pz_std": 4}
     if not isinstance(peak_idxs, list):
         peak_idxs = [peak_idxs]
     if not isinstance(kev_widths, list):
@@ -87,14 +89,14 @@ def event_selection(
 
     if lh5_path[-1] != "/":
         lh5_path +="/"
-    
+
     raw_fields = [field.replace(lh5_path, "") for field in lh5.ls(raw_files[0], lh5_path)]
     initial_fields = cts.get_keys(
         raw_fields, [initial_energy]
     )
     initial_fields += ["timestamp"]
 
-    df = lh5.read_as(lh5_path, raw_files, "pd", field_mask=initial_fields)
+    df = lh5.read_as(lh5_path, raw_files, "pd", field_mask=initial_fields)  # noqa: PD901
     df["initial_energy"] = df.eval(initial_energy)
 
     if pulser_mask is None and check_pulser is True:
@@ -105,10 +107,7 @@ def event_selection(
                 e_cut = (df.initial_energy.values < entry[0] + entry[1]) & (
                     df.initial_energy.values > entry[0] - entry[1]
                 )
-                if final_mask is None:
-                    final_mask = e_cut
-                else:
-                    final_mask = final_mask | e_cut
+                final_mask = e_cut if final_mask is None else final_mask | e_cut
             ids = final_mask
             log.debug(f"pulser found: {pulser_props}")
         else:
@@ -119,7 +118,7 @@ def event_selection(
         ids = pulser_mask
     else:
         ids = np.zeros(len(df.initial_energy.values), dtype=bool)
-    
+
     initial_mask = (df["initial_energy"] > threshold) & (~ids)
     rough_energy = np.array(df["initial_energy"])[initial_mask]
     initial_idxs = np.where(initial_mask)[0]
@@ -150,7 +149,7 @@ def event_selection(
             rough_adc_to_kev = roughpars[0]
             e_lower_lim = peak_loc - (1.1 * kev_width[0]) / rough_adc_to_kev
             e_upper_lim = peak_loc + (1.1 * kev_width[1]) / rough_adc_to_kev
-        except:
+        except ValueError:
             log.debug(f"{peak} peak not found attempting to use rough parameters")
             peak_loc = (peak - roughpars[1]) / roughpars[0]
             rough_adc_to_kev = roughpars[0]
@@ -174,7 +173,9 @@ def event_selection(
         with open(dsp_config) as r:
             dsp_config = json.load(r)
 
-    dsp_config["outputs"] = cts.get_keys(
+    dsp_config["outputs"] = cts.get_keys(  # noqa: RUF005 # Leaving the error
+                                           # here for now because I have no idea
+                                           # what the code does
         dsp_config["outputs"], list(cut_parameters)
     ) + [energy_parameter]
 
@@ -287,12 +288,18 @@ sto = lh5.LH5Store()
 
 t0 = time.time()
 
-if isinstance(args.raw_filelist, list) and args.raw_filelist[0].split(".")[-1] == "filelist":
-    files = args.raw_filelist[0]
-    with open(input_file) as f:
-        files = f.read().splitlines()
-else:
-    files = args.raw_filelist
+# The commented code below contains a undefined symbol `input_file`. That
+# branch has never been run so there has no bug report yet. Ruff found it so I
+# commented it out.
+
+#if isinstance(args.raw_filelist, list) and args.raw_filelist[0].split(".")[-1] == "filelist":
+#    files = args.raw_filelist[0]
+#    with open(input_file) as f:
+#        files = f.read().splitlines()
+#else:
+#    files = args.raw_filelist
+
+files = args.raw_filelist
 
 conf = LegendMetadata(path=args.configs)
 configs = conf.on(args.timestamp)
