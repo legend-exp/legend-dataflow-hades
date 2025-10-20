@@ -43,15 +43,14 @@ import pygama.pargen.cuts as cts
 import pygama.pargen.dsp_optimize as opt
 import pygama.pargen.energy_cal as pgc
 
+
 def get_wf_indexes(sorted_indexs, n_events):
     out_list = []
     if isinstance(n_events, list):
         for i in range(len(n_events)):
             new_list = []
             for idx, entry in enumerate(sorted_indexs):
-                if (entry >= np.sum(n_events[:i])) and (
-                    entry < np.sum(n_events[: i + 1])
-                ):
+                if (entry >= np.sum(n_events[:i])) and (entry < np.sum(n_events[: i + 1])):
                     new_list.append(idx)
             out_list.append(new_list)
     else:
@@ -62,6 +61,7 @@ def get_wf_indexes(sorted_indexs, n_events):
                     new_list.append(idx)
             out_list.append(new_list)
     return out_list
+
 
 def event_selection(
     raw_files,
@@ -88,12 +88,10 @@ def event_selection(
         kev_widths = [kev_widths]
 
     if lh5_path[-1] != "/":
-        lh5_path +="/"
+        lh5_path += "/"
 
     raw_fields = [field.replace(lh5_path, "") for field in lh5.ls(raw_files[0], lh5_path)]
-    initial_fields = cts.get_keys(
-        raw_fields, [initial_energy]
-    )
+    initial_fields = cts.get_keys(raw_fields, [initial_energy])
     initial_fields += ["timestamp"]
 
     df = lh5.read_as(lh5_path, raw_files, "pd", field_mask=initial_fields)  # noqa: PD901
@@ -174,9 +172,10 @@ def event_selection(
             dsp_config = json.load(r)
 
     dsp_config["outputs"] = cts.get_keys(  # noqa: RUF005 # Leaving the error
-                                           # here for now because I have no idea
-                                           # what the code does
-        dsp_config["outputs"], list(cut_parameters)
+        # here for now because I have no idea
+        # what the code does
+        dsp_config["outputs"],
+        list(cut_parameters),
     ) + [energy_parameter]
 
     log.debug("Processing data")
@@ -248,6 +247,7 @@ def event_selection(
     idx_list = get_wf_indexes(sort_index, [len(mask) for mask in final_events])
     return out_events, idx_list
 
+
 #
 # The code above was copied from a locally developed version of Pygama in LNGS
 #
@@ -292,11 +292,11 @@ t0 = time.time()
 # branch has never been run so there has no bug report yet. Ruff found it so I
 # commented it out.
 
-#if isinstance(args.raw_filelist, list) and args.raw_filelist[0].split(".")[-1] == "filelist":
+# if isinstance(args.raw_filelist, list) and args.raw_filelist[0].split(".")[-1] == "filelist":
 #    files = args.raw_filelist[0]
 #    with open(input_file) as f:
 #        files = f.read().splitlines()
-#else:
+# else:
 #    files = args.raw_filelist
 
 files = args.raw_filelist
@@ -312,7 +312,6 @@ opt_dict = Props.read_from(opt_json)
 db_dict = Props.read_from(args.decay_const)
 
 if opt_dict.pop("run_eopt") is True:
-
     raw_files = sorted(files)
 
     peaks_keV = np.array(opt_dict["peaks"])

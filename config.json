@@ -50,8 +50,8 @@
     "l200": {
       "paths": {
         "src": "$_/software/python/src",
-          "install": "$_/software/python/install",
-          "cache": "$_/software/python/cache"
+        "install": "$_/software/python/install",
+        "cache": "$_/software/python/cache"
       },
       "execenv": {
         "cmd": "",

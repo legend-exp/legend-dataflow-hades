@@ -99,9 +99,9 @@ if __name__ == "__main__":
     logging.getLogger("matplotlib").setLevel(logging.INFO)
 
     configs = LegendMetadata(path=args.configs)
-    channel_dict = configs.on(args.timestamp)["snakemake_rules"][
-        "pars_hit_aoecal"
-    ]["inputs"]["aoecal_config"][args.detector]
+    channel_dict = configs.on(args.timestamp)["snakemake_rules"]["pars_hit_aoecal"]["inputs"][
+        "aoecal_config"
+    ][args.detector]
 
     kwarg_dict = Props.read_from(channel_dict)
 

@@ -33,6 +33,7 @@ lint.extend-ignore = [
   "E402",   # Module level imports at top of file need disable for numba default imports
   "RUF022", # Sort '__all__'
   "I001",   # Import block is un-sorted or un-formatted
+  "F401",   # Imported but unused
 ]
 target-version = "py37"
 src = ["src"]
