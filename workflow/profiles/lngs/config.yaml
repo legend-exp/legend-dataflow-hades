@@ -1,0 +1,11 @@
+cores: 90
+restart-times: 2
+resources:
+  - mem_swap=3500
+configfile: dataflow-config.yaml
+snakefile: ./workflow/Snakefile
+keep-going: true
+rerun-incomplete: true
+config:
+  - system=lngs
+  - XDG_CACHE_HOME=.snakemake/cache

@@ -2,6 +2,7 @@
 .snakemake/
 generated
 inputs
+software
 *.c
 .DS_Store
 *.npz
