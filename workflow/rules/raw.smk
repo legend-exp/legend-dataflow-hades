@@ -5,9 +5,11 @@ from hadesflow.methods.patterns import (
 )
 from legenddataflowscripts.workflow import execenv_pyexe
 
+
 def get_json_output(output):
     print(output[0])
-    return "'{filekey:" + output+"}'"
+    return "'{filekey:" + output + "}'"
+
 
 rule build_raw:
     """
@@ -23,7 +25,7 @@ rule build_raw:
             wildcards.detector,
             "tier_raw",
             "raw_config",
-        )
+        ),
     output:
         get_pattern_tier(config, "raw", check_in_cycle=check_in_cycle),
     log:
@@ -34,5 +36,5 @@ rule build_raw:
         execenv_pyexe(config, "legend-daq2lh5") + " "
         "--out-spec {params.config_file} "
         "{input} "
-        "--kwargs " + "'" + '{{"filekey":' +'"{output}"' + "}}'"
+        "--kwargs " + "'" + '{{"filekey":' + '"{output}"' + "}}'"
         " > {log}"

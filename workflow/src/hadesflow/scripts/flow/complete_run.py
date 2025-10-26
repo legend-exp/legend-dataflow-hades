@@ -17,8 +17,10 @@ from snakemake.script import snakemake  # snakemake > 8.16
 
 print("INFO: dataflow ran successfully, now few final checks and scripts")
 
+
 def as_ro_path(path):
     return as_ro(snakemake.params.config, path)
+
 
 def check_log_files(log_path, output_file, gen_output, warning_file=None):
     now = datetime.datetime.now(datetime.UTC).strftime("%d/%m/%y %H:%M")
@@ -52,13 +54,9 @@ def check_log_files(log_path, output_file, gen_output, warning_file=None):
                 Path(file).unlink()
                 text = None
             if n_errors == 0:
-                f.write(
-                    f"{gen_output} successfully generated at {now} with no errors \n"
-                )
+                f.write(f"{gen_output} successfully generated at {now} with no errors \n")
             if n_warnings == 0:
-                w.write(
-                    f"{gen_output} successfully generated at {now} with no warnings \n"
-                )
+                w.write(f"{gen_output} successfully generated at {now} with no warnings \n")
     else:
         with Path(output_file).open("w") as f:
             n_errors = 0
@@ -79,9 +77,7 @@ def check_log_files(log_path, output_file, gen_output, warning_file=None):
                 Path(file).unlink()
                 text = None
             if n_errors == 0:
-                f.write(
-                    f"{gen_output} successfully generated at {now} with no errors \n"
-                )
+                f.write(f"{gen_output} successfully generated at {now} with no errors \n")
     walk = list(os.walk(log_path))
     for path, _, _ in walk[::-1]:
         if len(list(Path(path).iterdir())) == 0:
@@ -92,9 +88,7 @@ def find_gen_runs(gen_tier_path):
     # first look for non-concat tiers
     paths = gen_tier_path.glob("*/*/*")
     # use the directories to build a tier/detector/measurement string
-    runs = {"/".join(str(p).split("/")[-2:]) for p in paths}
-
-    return runs
+    return {"/".join(str(p).split("/")[-2:]) for p in paths}
 
 
 def build_file_dbs(gen_tier_path, outdir, ignore_keys_file=None):
@@ -163,9 +157,7 @@ def build_file_dbs(gen_tier_path, outdir, ignore_keys_file=None):
 
 
 def fformat(tier):
-    abs_path = pat.get_pattern_tier(
-        snakemake.params.config, tier, check_in_cycle=False
-    )
+    abs_path = pat.get_pattern_tier(snakemake.params.config, tier, check_in_cycle=False)
     return str(abs_path).replace(pat.get_tier_path(snakemake.params.config, tier), "")
 
 
@@ -192,9 +184,7 @@ if snakemake.params.config.get("build_file_dbs", True):
 
         file_db_config["data_dir"] = "/"
 
-    file_db_config["tier_dirs"] = {
-        k: tdirs(k) for k in snakemake.params.config["table_format"]
-    }
+    file_db_config["tier_dirs"] = {k: tdirs(k) for k in snakemake.params.config["table_format"]}
 
     file_db_config |= {
         "file_format": {k: fformat(k) for k in snakemake.params.config["table_format"]},
@@ -224,6 +214,6 @@ if snakemake.params.config.get("check_log_files", True):
         snakemake.output.summary_log,
         snakemake.output.gen_output,
         warning_file=snakemake.output.warning_log,
-    )   
+    )
 
 Path(snakemake.output.gen_output).touch()

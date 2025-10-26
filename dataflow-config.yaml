@@ -46,7 +46,7 @@ execenv:
   bare:
     env:
       PRODENV: $PRODENV
-      NUMBA_CACHE_DIR: $_/.snakemake/legend-dataflow/venv/cache 
+      NUMBA_CACHE_DIR: $_/.snakemake/legend-dataflow/venv/cache
       LGDO_BOUNDSCHECK: "false"
       DSPEED_BOUNDSCHECK: "false"
       PYGAMA_PARALLEL: "false"

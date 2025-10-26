@@ -18,9 +18,7 @@ def build_dsp_hades():
 
     argparser.add_argument("--settings", help="settings", required=False, nargs="*")
 
-    argparser.add_argument(
-        "--database", help="database file for HPGes", nargs="*", default=[]
-    )
+    argparser.add_argument("--database", help="database file for HPGes", nargs="*", default=[])
     argparser.add_argument("--input", help="input file")
 
     argparser.add_argument("--output", help="output file")
@@ -31,10 +29,7 @@ def build_dsp_hades():
     db = Props.read_from(args.database)
     proc_chain = Props.read_from(args.processing_chain)
 
-    if args.settings:
-        settings_dict = Props.read_from(args.settings)
-    else:
-        settings_dict = {}
+    settings_dict = Props.read_from(args.settings) if args.settings else {}
 
     build_dsp(
         args.input,
@@ -44,5 +39,5 @@ def build_dsp_hades():
         write_mode="r",
         buffer_len=settings_dict.get("buffer_len", 1000),
         block_width=settings_dict.get("block_width", 16),
-        lh5_tables="raw"
+        lh5_tables="raw",
     )

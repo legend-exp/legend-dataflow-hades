@@ -10,9 +10,7 @@ from hadesflow.methods import FileKey
 from hadesflow.methods.utils import convert_to_daq_run
 
 
-def get_ignored_keys(
-    ignore_keys_file
-):
+def get_ignored_keys(ignore_keys_file):
     """
     This function reads in the ignore_keys and analysis_runs files and returns the dictionaries
     """
@@ -26,8 +24,7 @@ def get_ignored_keys(
                 with Path(ignore_keys_file).open() as f:
                     ignore_keys = f.read().splitlines()
                 ignore_keys = [  # remove any comments in the keylist
-                    key.split("#")[0].strip() if "#" in key else key.strip()
-                    for key in ignore_keys
+                    key.split("#")[0].strip() if "#" in key else key.strip() for key in ignore_keys
                 ]
 
             else:
@@ -41,7 +38,9 @@ def get_ignored_keys(
     return ignore_keys
 
 
-def get_keys(keypart, ):
+def get_keys(
+    keypart,
+):
     key = FileKey.parse_keypart(keypart)
 
     item_list = []
@@ -53,7 +52,7 @@ def get_keys(keypart, ):
 
         if name == "run":
             _item += [convert_to_daq_run(i) for i in _item]
-        
+
         if isinstance(_item, list):
             item_list.append(_item)
 
@@ -74,9 +73,7 @@ def get_pattern(config, tier):
     as only phy files are taken to skm others are only taken to pet
     """
     if tier in ("daq", "daq_compress"):
-        fn_pattern = patt.get_pattern_tier_daq(
-            config, extension="{ext}", check_in_cycle=False
-        )
+        fn_pattern = patt.get_pattern_tier_daq(config, extension="{ext}", check_in_cycle=False)
     else:
         fn_pattern = patt.get_pattern_tier(config, tier, check_in_cycle=False)
     return fn_pattern
@@ -118,7 +115,7 @@ def build_filelist(
             else:
                 search_pat = _search_pat
             fn_glob_pattern = key.get_path_from_filekey(search_pat, ext="*")[0]
-            files = glob.glob(fn_glob_pattern)  # noqa: PTH207
+            files = glob.glob(fn_glob_pattern)
             for f in files:
                 _key = FileKey.get_filekey_from_pattern(f, search_pat)
                 if _key.name in ignore_keys:
@@ -140,20 +137,15 @@ def build_filelist(
                     else:
                         filename = FileKey.get_path_from_filekey(_key, fn_pattern)
 
-
                     filenames += filename
 
     return sorted(filenames)
 
 
-def get_filelist(
-    wildcards, config, search_pattern, ignore_keys_file=None
-):
+def get_filelist(wildcards, config, search_pattern, ignore_keys_file=None):
     # remove the file selection from the keypart
     keypart = f"-{wildcards.label.split('-', 1)[1]}"
-    ignore_keys = get_ignored_keys(
-        ignore_keys_file
-    )
+    ignore_keys = get_ignored_keys(ignore_keys_file)
 
     filekeys = get_keys(keypart)
 
@@ -172,13 +164,12 @@ def get_filelist_full_wildcards(
     search_pattern,
     tier,
     ignore_keys_file=None,
-    file_selection="all",
 ):
-    keypart = f"-{wildcards.experiment}-{wildcards.detector}-{wildcards.measurement}-{wildcards.run}"
-
-    ignore_keys = get_ignored_keys(
-        ignore_keys_file
+    keypart = (
+        f"-{wildcards.experiment}-{wildcards.detector}-{wildcards.measurement}-{wildcards.run}"
     )
+
+    ignore_keys = get_ignored_keys(ignore_keys_file)
 
     filekeys = get_keys(keypart)
     return build_filelist(

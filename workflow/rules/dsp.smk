@@ -17,7 +17,6 @@ from hadesflow.methods.patterns import (
 )
 
 
-
 rule build_dsp:
     input:
         raw_file=get_pattern_tier(config, "raw", check_in_cycle=False),
@@ -53,5 +52,3 @@ rule build_dsp:
         "--output {output.tier_file} "
         "--processing-chain {params.config_file} "
         "--database {input.pars_file} "
-        
-        

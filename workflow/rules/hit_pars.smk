@@ -8,6 +8,7 @@ from hadesflow.methods.patterns import (
     get_pattern_log_par,
 )
 
+
 # This rule builds the energy calibration using the calibration dsp files
 rule build_energy_calibration:
     input:
@@ -99,7 +100,9 @@ rule build_lq_calibration:
             "all-{experiment}-{detector}-th_HS2_top_psa-dsp.filelist",
         ),
         ecal_file=get_pattern_pars_tmp(config, "hit", "aoe_cal"),
-        eres_file=get_pattern_pars_tmp(config, "hit", "aoe_cal_objects", extension="pkl"),
+        eres_file=get_pattern_pars_tmp(
+            config, "hit", "aoe_cal_objects", extension="pkl"
+        ),
         inplots=get_pattern_plts_tmp(config, "hit", "aoe_cal"),
     params:
         timestamp="{timestamp}",

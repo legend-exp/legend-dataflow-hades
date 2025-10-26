@@ -18,6 +18,7 @@ from .utils import convert_to_legend_timestamp, convert_to_legend_run
 
 # key_pattern -> key
 
+
 def regex_from_filepattern(filepattern):
     f = []
     wildcards = []
@@ -59,14 +60,14 @@ class FileKey(
 
     def _list(self):
         return list(self)
-    
+
     def items(self):
         return self._asdict().items()
 
     @property
     def __str__(self):
         return self.name
-    
+
     def __repr__(self):
         return self.name
 
@@ -80,7 +81,9 @@ class FileKey(
 
     @classmethod
     def get_filekey_from_pattern(cls, filename, pattern=None):
-        key_pattern_rx = re.compile(regex_from_filepattern(str(cls.key_pattern) if pattern is None else str(pattern)))
+        key_pattern_rx = re.compile(
+            regex_from_filepattern(str(cls.key_pattern) if pattern is None else str(pattern))
+        )
         if key_pattern_rx.match(filename) is None:
             return None
         else:
@@ -91,7 +94,7 @@ class FileKey(
             for wildcard in cls._fields:
                 if wildcard not in d:
                     d[wildcard] = "*"
-            if d["timestamp"][-1] !="Z":
+            if d["timestamp"][-1] != "Z":
                 d["timestamp"] = convert_to_legend_timestamp(d["timestamp"])
             if "run" in d["run"]:
                 d["run"] = convert_to_legend_run(d["run"])

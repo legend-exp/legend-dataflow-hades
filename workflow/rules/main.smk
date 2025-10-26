@@ -42,4 +42,3 @@ rule autogen_output:
     threads: min(workflow.cores, 64)
     script:
         "../src/hadesflow/scripts/flow/complete_run.py"
-    

@@ -1,4 +1,3 @@
-
 def tier_daq_path(setup):
     return setup["paths"]["tier_daq"]
 

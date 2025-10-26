@@ -5,20 +5,26 @@ and for substituting the pathvar within, also the conversion
 from timestamp to unix time
 """
 
-import os, re
+import os
+import re
 from datetime import datetime
+
 
 def convert_to_daq_timestamp(value):
     return datetime.strftime(datetime.strptime(value, "%Y%m%dT%H%M%SZ"), "%y%m%dT%H%M%S")
 
+
 def convert_to_legend_timestamp(value):
     return datetime.strftime(datetime.strptime(value, "%y%m%dT%H%M%S"), "%Y%m%dT%H%M%SZ")
 
+
 def convert_to_legend_run(value):
-    return re.sub(r'run\d{1}(\d{3})', r"r\1", value)
+    return re.sub(r"run\d{1}(\d{3})", r"r\1", value)
+
 
 def convert_to_daq_run(value):
-    return re.sub(r'r(\d{3})', r"run0\1", value)
+    return re.sub(r"r(\d{3})", r"run0\1", value)
+
 
 def run_splitter(files):
     """

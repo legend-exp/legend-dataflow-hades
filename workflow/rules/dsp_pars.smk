@@ -75,7 +75,8 @@ rule build_pars_dsp_pz_geds:
 rule build_pars_evtsel_geds:
     input:
         files=os.path.join(
-            filelist_path(config), "all-{experiment}-{detector}-{measurement}-{run}-raw.filelist"
+            filelist_path(config),
+            "all-{experiment}-{detector}-{measurement}-{run}-raw.filelist",
         ),
         database=rules.build_pars_dsp_pz_geds.output.decay_const,
     params:
@@ -103,9 +104,7 @@ rule build_pars_evtsel_geds:
         ),
         raw_table_name="raw",
     output:
-        peak_file=temp(
-            get_pattern_pars_tmp(config, "dsp", "peaks", extension="lh5")
-        ),
+        peak_file=temp(get_pattern_pars_tmp(config, "dsp", "peaks", extension="lh5")),
     log:
         get_pattern_log(config, "par_dsp_event_selection", time),
     group:
@@ -122,6 +121,7 @@ rule build_pars_evtsel_geds:
         "--peak-file {output.peak_file} "
         "--decay-const {input.database} "
         "--raw-filelist {input.files}"
+
 
 # This rule builds the optimal energy filter parameters for the dsp using calibration dsp files
 rule build_pars_dsp_eopt_geds:
@@ -155,9 +155,7 @@ rule build_pars_dsp_eopt_geds:
         raw_table_name="raw",
     output:
         dsp_pars=temp(get_pattern_pars(config, "dsp")),
-        qbb_grid=temp(
-            get_pattern_pars(config, "dsp", "objects", extension="pkl")
-        ),
+        qbb_grid=temp(get_pattern_pars(config, "dsp", "objects", extension="pkl")),
         plots=temp(get_pattern_plts(config, "dsp")),
     log:
         get_pattern_log(config, "pars_dsp_eopt", time),

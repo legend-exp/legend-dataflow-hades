@@ -20,6 +20,7 @@ from hadesflow.scripts.flow.build_filelist import get_filelist
 # Set with `snakemake --configfile=/path/to/your/config.json`
 # configfile: "have/to/specify/path/to/your/config.json"
 
+
 envvars:
     "PRODENV",
 
@@ -55,6 +56,7 @@ wildcard_constraints:
     run=r"r\d{3}",
     timestamp=r"\d{8}T\d{6}Z",
 
+
 check_in_cycle = True
 
 
@@ -63,6 +65,8 @@ include: "rules/main.smk"
 include: "rules/raw.smk"
 include: "rules/dsp_pars.smk"
 include: "rules/dsp.smk"
+
+
 # include: "rules/hit_pars.smk"
 # include: "rules/hit.smk"
 
@@ -91,9 +95,11 @@ onsuccess:
     # shell(f"rm {filelist_path(setup)}/* || true")
 
 
+
 # Placeholder, can email or maybe put message in slack
 onerror:
     print("An error occurred :( ")
+
 
 rule gen_filelist:
     """Generate file list.
