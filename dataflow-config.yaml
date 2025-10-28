@@ -1,4 +1,4 @@
-#hades_metadata_version: v1.0.4
+hades_metadata_version: main
 allow_none_par: false
 build_file_dbs: true
 check_log_files: true
