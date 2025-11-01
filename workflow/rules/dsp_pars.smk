@@ -154,9 +154,9 @@ rule build_pars_dsp_eopt_geds:
         ),
         raw_table_name="raw",
     output:
-        dsp_pars=temp(get_pattern_pars(config, "dsp")),
-        qbb_grid=temp(get_pattern_pars(config, "dsp", "objects", extension="pkl")),
-        plots=temp(get_pattern_plts(config, "dsp")),
+        dsp_pars=get_pattern_pars(config, "dsp"),
+        qbb_grid=get_pattern_pars(config, "dsp", "objects", extension="pkl"),
+        plots=get_pattern_plts(config, "dsp"),
     log:
         get_pattern_log(config, "pars_dsp_eopt", time),
     group:

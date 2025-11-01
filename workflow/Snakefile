@@ -65,10 +65,8 @@ include: "rules/main.smk"
 include: "rules/raw.smk"
 include: "rules/dsp_pars.smk"
 include: "rules/dsp.smk"
-
-
-# include: "rules/hit_pars.smk"
-# include: "rules/hit.smk"
+include: "rules/hit_pars.smk"
+include: "rules/hit.smk"
 
 
 localrules:
