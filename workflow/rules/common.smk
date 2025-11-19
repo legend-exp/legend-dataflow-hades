@@ -57,6 +57,9 @@ def get_par_file(wildcards, tier):
     else:
         wildcards["measurement"] = "th_HS2_top_psa"
 
+    wildcards["run"] = "*"
+    wildcards["timestamp"] = "*"
+
     # if wildcards.measurement == "bkg":
     #     measurement = "th_HS2_top_psa"
     # elif wildcards.measurement == "co_HS5_top_hvs":
