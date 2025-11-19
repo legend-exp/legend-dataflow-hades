@@ -27,11 +27,11 @@ def ro(path):
 
 
 def get_search_pattern(tier):
-    if tier in ("raw") and get_pattern_tier(
-        config, "raw", check_in_cycle=False
-    ) == get_pattern_tier(config, "raw", check_in_cycle=True):
+    if tier in ("daq", "daq_compress"):
         return get_pattern_tier(config, "daq", check_in_cycle=False)
-    elif tier in ("daq", "daq_compress"):
+    elif get_pattern_tier(config, "raw", check_in_cycle=False) == get_pattern_tier(
+        config, "raw", check_in_cycle=True
+    ):
         return get_pattern_tier(config, "daq", check_in_cycle=False)
     else:
         return get_pattern_tier(config, "raw", check_in_cycle=False)
