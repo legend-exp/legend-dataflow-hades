@@ -34,7 +34,7 @@ def get_pattern_tier_daq(setup):
     return (
         Path(f"{tier_daq_path(setup)}")
         / "{detector}"
-        / "v1"
+        / "c1"
         / "{measurement}"
         / (key_pattern() + ".fcio")
     )
