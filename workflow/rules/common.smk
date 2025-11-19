@@ -26,6 +26,17 @@ def ro(path):
     return as_ro(config, path)
 
 
+def get_search_pattern(tier):
+    if tier in ("raw") and get_pattern_tier(
+        config, "raw", check_in_cycle=False
+    ) == get_pattern_tier(config, "raw", check_in_cycle=True):
+        return get_pattern_tier(config, "daq", check_in_cycle=False)
+    elif tier in ("daq", "daq_compress"):
+        return get_pattern_tier(config, "daq", check_in_cycle=False)
+    else:
+        return get_pattern_tier(config, "raw", check_in_cycle=False)
+
+
 def get_th_filelist_longest_run(wildcards):
     # # with open(f"all-{wildcards.detector}-th_HS2_lat_psa-tier1.filelist") as f:
     # label = f"all-{wildcards.experiment}-{wildcards.detector}-th_HS2_top_psa"

@@ -106,7 +106,7 @@ rule gen_filelist:
         lambda wildcards: get_filelist(
             wildcards,
             config,
-            get_pattern_tier(config, "daq", check_in_cycle=False),
+            get_search_pattern,
             ignore_keys_file=Path(dataflow_configs) / "ignored_cycles.yaml",
         ),
     output:
