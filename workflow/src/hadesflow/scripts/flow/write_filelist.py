@@ -1,4 +1,4 @@
-# ruff: noqa: T201, I002
+# ruff: noqa: T201
 
 from pathlib import Path
 

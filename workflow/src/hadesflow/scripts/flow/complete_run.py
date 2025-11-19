@@ -1,4 +1,4 @@
-# ruff: noqa: F821, T201
+# ruff: noqa: T201
 
 import json
 import os

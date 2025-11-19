@@ -7,6 +7,7 @@ from hadesflow.methods.patterns import (
     get_pattern_pars,
 )
 
+
 # This rule builds the qc using the calibration dsp files and fft files
 rule par_hit_qc:
     input:
@@ -48,6 +49,7 @@ rule par_hit_qc:
         "--save-path {output.qc_file} "
         "--cal-files {input.files} "
 
+
 # This rule builds the energy calibration using the calibration dsp files
 rule build_energy_calibration:
     input:
@@ -56,8 +58,8 @@ rule build_energy_calibration:
             / "all-{experiment}-{detector}-{measurement}-{run}-dsp.filelist"
         ),
         ctc_dict=get_pattern_pars(config, "dsp"),
-        inplots = rules.par_hit_qc.output.plot_file,
-        in_hit_dict = rules.par_hit_qc.output.qc_file
+        inplots=rules.par_hit_qc.output.plot_file,
+        in_hit_dict=rules.par_hit_qc.output.qc_file,
     params:
         config_file=lambda wildcards: get_config_files(
             dataflow_configs_texdb,
@@ -117,7 +119,7 @@ rule build_aoe_calibration:
         ),
         inplots=get_pattern_plts_tmp(config, "hit", "energy_cal"),
     params:
-       config_file=lambda wildcards: get_config_files(
+        config_file=lambda wildcards: get_config_files(
             dataflow_configs_texdb,
             wildcards.timestamp,
             wildcards.measurement,
