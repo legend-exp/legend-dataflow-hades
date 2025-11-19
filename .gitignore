@@ -13,6 +13,7 @@ software
 *.lh5
 *~
 *.csv
+workflow/src/hadesflow/_version.py
 
 
 # -------------------- github-generated stuff -------------------

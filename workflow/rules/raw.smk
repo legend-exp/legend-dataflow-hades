@@ -27,7 +27,7 @@ rule build_raw:
             "raw_config",
         ),
     output:
-        get_pattern_tier(config, "raw", check_in_cycle=check_in_cycle),
+        protected(get_pattern_tier(config, "raw", check_in_cycle=check_in_cycle)),
     log:
         get_pattern_log(config, "tier_raw", time),
     group:

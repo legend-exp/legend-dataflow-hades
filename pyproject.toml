@@ -71,6 +71,7 @@ dependencies = [
 runprod = [
     "pygments",
     "snakemake==9.9.0",
+    "snakemake-storage-plugin-fs",
 ]
 test = [
     "hades_dataflow[runprod]",
