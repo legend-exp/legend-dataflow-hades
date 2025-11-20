@@ -15,6 +15,7 @@ from hadesflow.methods.patterns import (
     get_pattern_pars,
     get_pattern_log_par,
 )
+from legenddataflowscripts.workflow import execenv_pyexe
 
 
 rule build_dsp:

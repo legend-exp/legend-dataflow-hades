@@ -43,5 +43,6 @@ rule build_hit:
         execenv_pyexe(config, "build-hit-hades") + "--log {log} "
         "--log-config {params.log_config} "
         "--input {input.dsp_file} "
-        "--config {params.config_file} {input.pars_file} "
+        "--config {params.config_file}  "
+        "--pars {input.pars_file} "
         "--output {output.tier_file} "

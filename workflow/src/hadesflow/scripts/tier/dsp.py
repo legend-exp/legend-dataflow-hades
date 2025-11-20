@@ -40,4 +40,5 @@ def build_dsp_hades():
         buffer_len=settings_dict.get("buffer_len", 1000),
         block_width=settings_dict.get("block_width", 16),
         lh5_tables="raw",
+        base_group="",
     )

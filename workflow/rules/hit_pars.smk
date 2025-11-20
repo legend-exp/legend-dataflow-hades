@@ -30,7 +30,7 @@ rule par_hit_qc:
             wildcards.measurement,
             "pars_hit_qc",
         ),
-        dsp_table_name="raw",
+        dsp_table_name="dsp",
     output:
         qc_file=temp(get_pattern_pars_tmp(config, "hit", "qc")),
         plot_file=temp(get_pattern_plts(config, "hit", "qc")),
@@ -75,7 +75,7 @@ rule build_energy_calibration:
             wildcards.measurement,
             "pars_hit_ecal",
         ),
-        dsp_table_name="raw",
+        dsp_table_name="dsp",
         det_status="on",
     output:
         ecal_file=temp(get_pattern_pars_tmp(config, "hit", "energy_cal")),
@@ -103,6 +103,7 @@ rule build_energy_calibration:
         "--inplot-dict {input.inplots} "
         "--in-hit-dict {input.in_hit_dict} "
         "--ctc-dict {input.ctc_dict} "
+        "-d "
         "--files {input.files}"
 
 
@@ -133,7 +134,7 @@ rule build_aoe_calibration:
             wildcards.measurement,
             "pars_hit_aoecal",
         ),
-        dsp_table_name="raw",
+        dsp_table_name="dsp",
     output:
         hit_pars=temp(get_pattern_pars_tmp(config, "hit", "aoe_cal")),
         aoe_results=temp(
@@ -187,7 +188,7 @@ rule build_lq_calibration:
             wildcards.measurement,
             "pars_hit_lqcal",
         ),
-        dsp_table_name="raw",
+        dsp_table_name="dsp",
     output:
         hit_pars=get_pattern_pars(config, "hit", check_in_cycle=check_in_cycle),
         lq_results=get_pattern_pars(
